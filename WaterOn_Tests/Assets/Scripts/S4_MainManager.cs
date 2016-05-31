@@ -16,6 +16,7 @@ public class S4_MainManager : MonoBehaviour {
 	// Change these variables
 	[Range(0f,1f)]
 	public float lake_water_level = 1f; // 0 -> 1
+	public bool testegit = true;
 
 	// Lake
 	protected float lake_generation_time = 3f;
