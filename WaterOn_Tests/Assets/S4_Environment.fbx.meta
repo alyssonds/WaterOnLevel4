@@ -1,0 +1,455 @@
+fileFormatVersion: 2
+guid: 0f5919df0e6f8ea46860583c4262d8e4
+timeCreated: 1460644666
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: 01_rocky_mountain_north_america 01
+    100002: 01_rocky_mountain_north_america 01.001
+    100004: 01_rocky_mountain_north_america 01.001_MeshPart0
+    100006: 01_rocky_mountain_north_america 01.001_MeshPart1
+    100008: 01_rocky_mountain_north_america 01.001_MeshPart10
+    100010: 01_rocky_mountain_north_america 01.001_MeshPart11
+    100012: 01_rocky_mountain_north_america 01.001_MeshPart2
+    100014: 01_rocky_mountain_north_america 01.001_MeshPart3
+    100016: 01_rocky_mountain_north_america 01.001_MeshPart4
+    100018: 01_rocky_mountain_north_america 01.001_MeshPart5
+    100020: 01_rocky_mountain_north_america 01.001_MeshPart6
+    100022: 01_rocky_mountain_north_america 01.001_MeshPart7
+    100024: 01_rocky_mountain_north_america 01.001_MeshPart8
+    100026: 01_rocky_mountain_north_america 01.001_MeshPart9
+    100028: 01_rocky_mountain_north_america 01_MeshPart0
+    100030: 01_rocky_mountain_north_america 01_MeshPart1
+    100032: Camera
+    100034: Camera001
+    100036: Camera001.Target
+    100038: Camera002
+    100040: Camera002.Target
+    100042: Camera003
+    100044: Camera003.Target
+    100046: Camera004
+    100048: Camera004.Target
+    100050: Camera005
+    100052: Camera005.Target
+    100054: Cloud1
+    100056: Cloud2
+    100058: Cloud3
+    100060: Cloud4
+    100062: Cube
+    100064: Cube.001
+    100066: Lake
+    100068: PineTree_LOD0.001
+    100070: //RootNode
+    100072: SUN
+    100074: SUN.Target
+    100076: Tree05_LOD0
+    100078: Tree13_LOD0
+    100080: Tree14_LOD0
+    100082: Tree15_LOD0
+    100084: Tree16_LOD0
+    400000: 01_rocky_mountain_north_america 01
+    400002: 01_rocky_mountain_north_america 01.001
+    400004: 01_rocky_mountain_north_america 01.001_MeshPart0
+    400006: 01_rocky_mountain_north_america 01.001_MeshPart1
+    400008: 01_rocky_mountain_north_america 01.001_MeshPart10
+    400010: 01_rocky_mountain_north_america 01.001_MeshPart11
+    400012: 01_rocky_mountain_north_america 01.001_MeshPart2
+    400014: 01_rocky_mountain_north_america 01.001_MeshPart3
+    400016: 01_rocky_mountain_north_america 01.001_MeshPart4
+    400018: 01_rocky_mountain_north_america 01.001_MeshPart5
+    400020: 01_rocky_mountain_north_america 01.001_MeshPart6
+    400022: 01_rocky_mountain_north_america 01.001_MeshPart7
+    400024: 01_rocky_mountain_north_america 01.001_MeshPart8
+    400026: 01_rocky_mountain_north_america 01.001_MeshPart9
+    400028: 01_rocky_mountain_north_america 01_MeshPart0
+    400030: 01_rocky_mountain_north_america 01_MeshPart1
+    400032: Camera
+    400034: Camera001
+    400036: Camera001.Target
+    400038: Camera002
+    400040: Camera002.Target
+    400042: Camera003
+    400044: Camera003.Target
+    400046: Camera004
+    400048: Camera004.Target
+    400050: Camera005
+    400052: Camera005.Target
+    400054: Cloud1
+    400056: Cloud2
+    400058: Cloud3
+    400060: Cloud4
+    400062: Cube
+    400064: Cube.001
+    400066: Lake
+    400068: PineTree_LOD0.001
+    400070: //RootNode
+    400072: SUN
+    400074: SUN.Target
+    400076: Tree05_LOD0
+    400078: Tree13_LOD0
+    400080: Tree14_LOD0
+    400082: Tree15_LOD0
+    400084: Tree16_LOD0
+    2300000: 01_rocky_mountain_north_america 01.001_MeshPart0
+    2300002: 01_rocky_mountain_north_america 01.001_MeshPart1
+    2300004: 01_rocky_mountain_north_america 01.001_MeshPart10
+    2300006: 01_rocky_mountain_north_america 01.001_MeshPart11
+    2300008: 01_rocky_mountain_north_america 01.001_MeshPart2
+    2300010: 01_rocky_mountain_north_america 01.001_MeshPart3
+    2300012: 01_rocky_mountain_north_america 01.001_MeshPart4
+    2300014: 01_rocky_mountain_north_america 01.001_MeshPart5
+    2300016: 01_rocky_mountain_north_america 01.001_MeshPart6
+    2300018: 01_rocky_mountain_north_america 01.001_MeshPart7
+    2300020: 01_rocky_mountain_north_america 01.001_MeshPart8
+    2300022: 01_rocky_mountain_north_america 01.001_MeshPart9
+    2300024: 01_rocky_mountain_north_america 01_MeshPart0
+    2300026: 01_rocky_mountain_north_america 01_MeshPart1
+    2300028: Cloud1
+    2300030: Cloud2
+    2300032: Cloud3
+    2300034: Cloud4
+    2300036: Cube
+    2300038: Cube.001
+    2300040: Lake
+    2300042: PineTree_LOD0.001
+    2300044: Tree05_LOD0
+    2300046: Tree13_LOD0
+    2300048: Tree14_LOD0
+    2300050: Tree15_LOD0
+    2300052: Tree16_LOD0
+    3300000: 01_rocky_mountain_north_america 01.001_MeshPart0
+    3300002: 01_rocky_mountain_north_america 01.001_MeshPart1
+    3300004: 01_rocky_mountain_north_america 01.001_MeshPart10
+    3300006: 01_rocky_mountain_north_america 01.001_MeshPart11
+    3300008: 01_rocky_mountain_north_america 01.001_MeshPart2
+    3300010: 01_rocky_mountain_north_america 01.001_MeshPart3
+    3300012: 01_rocky_mountain_north_america 01.001_MeshPart4
+    3300014: 01_rocky_mountain_north_america 01.001_MeshPart5
+    3300016: 01_rocky_mountain_north_america 01.001_MeshPart6
+    3300018: 01_rocky_mountain_north_america 01.001_MeshPart7
+    3300020: 01_rocky_mountain_north_america 01.001_MeshPart8
+    3300022: 01_rocky_mountain_north_america 01.001_MeshPart9
+    3300024: 01_rocky_mountain_north_america 01_MeshPart0
+    3300026: 01_rocky_mountain_north_america 01_MeshPart1
+    3300028: Cloud1
+    3300030: Cloud2
+    3300032: Cloud3
+    3300034: Cloud4
+    3300036: Cube
+    3300038: Cube.001
+    3300040: Lake
+    3300042: PineTree_LOD0.001
+    3300044: Tree05_LOD0
+    3300046: Tree13_LOD0
+    3300048: Tree14_LOD0
+    3300050: Tree15_LOD0
+    3300052: Tree16_LOD0
+    4300000: Lake
+    4300002: 01_rocky_mountain_north_america 01.001_MeshPart0
+    4300004: 01_rocky_mountain_north_america 01.001_MeshPart1
+    4300006: 01_rocky_mountain_north_america 01.001_MeshPart2
+    4300008: 01_rocky_mountain_north_america 01.001_MeshPart3
+    4300010: 01_rocky_mountain_north_america 01.001_MeshPart4
+    4300012: 01_rocky_mountain_north_america 01.001_MeshPart5
+    4300014: 01_rocky_mountain_north_america 01.001_MeshPart6
+    4300016: 01_rocky_mountain_north_america 01.001_MeshPart7
+    4300018: 01_rocky_mountain_north_america 01.001_MeshPart8
+    4300020: 01_rocky_mountain_north_america 01.001_MeshPart9
+    4300022: 01_rocky_mountain_north_america 01.001_MeshPart10
+    4300024: 01_rocky_mountain_north_america 01.001_MeshPart11
+    4300026: 01_rocky_mountain_north_america 01_MeshPart0
+    4300028: 01_rocky_mountain_north_america 01_MeshPart1
+    4300030: Cube.001
+    4300032: Cube
+    4300034: Cloud2
+    4300036: Cloud3
+    4300038: Cloud1
+    4300040: Cloud4
+    4300042: PineTree_LOD0.001
+    4300044: Tree05_LOD0
+    4300046: Tree13_LOD0
+    4300048: Tree14_LOD0
+    4300050: Tree15_LOD0
+    4300052: Tree16_LOD0
+    7400000: 01_rocky_mountain_north_america 01.001|01_rocky_mountain_north_america
+      01|Take 001|BaseLayer
+    7400002: 01_rocky_mountain_north_america 01.001|01_rocky_mountain_north_america
+      01|Take 001|BaseLayer.001
+    7400004: 01_rocky_mountain_north_america 01.001|01_rocky_mountain_north_america
+      02|Take 001|BaseLayer
+    7400006: 01_rocky_mountain_north_america 01.001|Camera001.Target|Take 001|BaseLayer
+    7400008: 01_rocky_mountain_north_america 01.001|Camera001|Take 001|BaseLayer
+    7400010: 01_rocky_mountain_north_america 01.001|Camera002.Target|Take 001|BaseLayer
+    7400012: 01_rocky_mountain_north_america 01.001|Camera002|Take 001|BaseLayer
+    7400014: 01_rocky_mountain_north_america 01.001|Camera003.Target|Take 001|BaseLayer
+    7400016: 01_rocky_mountain_north_america 01.001|Camera003|Take 001|BaseLayer
+    7400018: 01_rocky_mountain_north_america 01.001|Camera004.Target|Take 001|BaseLayer
+    7400020: 01_rocky_mountain_north_america 01.001|Camera004|Take 001|BaseLayer
+    7400022: 01_rocky_mountain_north_america 01.001|Camera005.Target|Take 001|BaseLayer
+    7400024: 01_rocky_mountain_north_america 01.001|Camera005|Take 001|BaseLayer
+    7400026: 01_rocky_mountain_north_america 01.001|SUN.Target|Take 001|BaseLayer
+    7400028: 01_rocky_mountain_north_america 01.001|SUN|Take 001|BaseLayer
+    7400030: Camera005.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400032: Camera005.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400034: Camera005.Target|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400036: Camera005.Target|Camera001.Target|Take 001|BaseLayer
+    7400038: Camera005.Target|Camera001|Take 001|BaseLayer
+    7400040: Camera005.Target|Camera002.Target|Take 001|BaseLayer
+    7400042: Camera005.Target|Camera002|Take 001|BaseLayer
+    7400044: Camera005.Target|Camera003.Target|Take 001|BaseLayer
+    7400046: Camera005.Target|Camera003|Take 001|BaseLayer
+    7400048: Camera005.Target|Camera004.Target|Take 001|BaseLayer
+    7400050: Camera005.Target|Camera004|Take 001|BaseLayer
+    7400052: Camera005.Target|Camera005.Target|Take 001|BaseLayer
+    7400054: Camera005.Target|Camera005|Take 001|BaseLayer
+    7400056: Camera005.Target|SUN.Target|Take 001|BaseLayer
+    7400058: Camera005.Target|SUN|Take 001|BaseLayer
+    7400060: Camera005|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400062: Camera005|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400064: Camera005|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400066: Camera005|Camera001.Target|Take 001|BaseLayer
+    7400068: Camera005|Camera001|Take 001|BaseLayer
+    7400070: Camera005|Camera002.Target|Take 001|BaseLayer
+    7400072: Camera005|Camera002|Take 001|BaseLayer
+    7400074: Camera005|Camera003.Target|Take 001|BaseLayer
+    7400076: Camera005|Camera003|Take 001|BaseLayer
+    7400078: Camera005|Camera004.Target|Take 001|BaseLayer
+    7400080: Camera005|Camera004|Take 001|BaseLayer
+    7400082: Camera005|Camera005.Target|Take 001|BaseLayer
+    7400084: Camera005|Camera005|Take 001|BaseLayer
+    7400086: Camera005|SUN.Target|Take 001|BaseLayer
+    7400088: Camera005|SUN|Take 001|BaseLayer
+    7400090: Camera004.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400092: Camera004.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400094: Camera004.Target|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400096: Camera004.Target|Camera001.Target|Take 001|BaseLayer
+    7400098: Camera004.Target|Camera001|Take 001|BaseLayer
+    7400100: Camera004.Target|Camera002.Target|Take 001|BaseLayer
+    7400102: Camera004.Target|Camera002|Take 001|BaseLayer
+    7400104: Camera004.Target|Camera003.Target|Take 001|BaseLayer
+    7400106: Camera004.Target|Camera003|Take 001|BaseLayer
+    7400108: Camera004.Target|Camera004.Target|Take 001|BaseLayer
+    7400110: Camera004.Target|Camera004|Take 001|BaseLayer
+    7400112: Camera004.Target|Camera005.Target|Take 001|BaseLayer
+    7400114: Camera004.Target|Camera005|Take 001|BaseLayer
+    7400116: Camera004.Target|SUN.Target|Take 001|BaseLayer
+    7400118: Camera004.Target|SUN|Take 001|BaseLayer
+    7400120: Camera004|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400122: Camera004|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400124: Camera004|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400126: Camera004|Camera001.Target|Take 001|BaseLayer
+    7400128: Camera004|Camera001|Take 001|BaseLayer
+    7400130: Camera004|Camera002.Target|Take 001|BaseLayer
+    7400132: Camera004|Camera002|Take 001|BaseLayer
+    7400134: Camera004|Camera003.Target|Take 001|BaseLayer
+    7400136: Camera004|Camera003|Take 001|BaseLayer
+    7400138: Camera004|Camera004.Target|Take 001|BaseLayer
+    7400140: Camera004|Camera004|Take 001|BaseLayer
+    7400142: Camera004|Camera005.Target|Take 001|BaseLayer
+    7400144: Camera004|Camera005|Take 001|BaseLayer
+    7400146: Camera004|SUN.Target|Take 001|BaseLayer
+    7400148: Camera004|SUN|Take 001|BaseLayer
+    7400150: Camera003.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400152: Camera003.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400154: Camera003.Target|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400156: Camera003.Target|Camera001.Target|Take 001|BaseLayer
+    7400158: Camera003.Target|Camera001|Take 001|BaseLayer
+    7400160: Camera003.Target|Camera002.Target|Take 001|BaseLayer
+    7400162: Camera003.Target|Camera002|Take 001|BaseLayer
+    7400164: Camera003.Target|Camera003.Target|Take 001|BaseLayer
+    7400166: Camera003.Target|Camera003|Take 001|BaseLayer
+    7400168: Camera003.Target|Camera004.Target|Take 001|BaseLayer
+    7400170: Camera003.Target|Camera004|Take 001|BaseLayer
+    7400172: Camera003.Target|Camera005.Target|Take 001|BaseLayer
+    7400174: Camera003.Target|Camera005|Take 001|BaseLayer
+    7400176: Camera003.Target|SUN.Target|Take 001|BaseLayer
+    7400178: Camera003.Target|SUN|Take 001|BaseLayer
+    7400180: Camera003|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400182: Camera003|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400184: Camera003|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400186: Camera003|Camera001.Target|Take 001|BaseLayer
+    7400188: Camera003|Camera001|Take 001|BaseLayer
+    7400190: Camera003|Camera002.Target|Take 001|BaseLayer
+    7400192: Camera003|Camera002|Take 001|BaseLayer
+    7400194: Camera003|Camera003.Target|Take 001|BaseLayer
+    7400196: Camera003|Camera003|Take 001|BaseLayer
+    7400198: Camera003|Camera004.Target|Take 001|BaseLayer
+    7400200: Camera003|Camera004|Take 001|BaseLayer
+    7400202: Camera003|Camera005.Target|Take 001|BaseLayer
+    7400204: Camera003|Camera005|Take 001|BaseLayer
+    7400206: Camera003|SUN.Target|Take 001|BaseLayer
+    7400208: Camera003|SUN|Take 001|BaseLayer
+    7400210: Camera002.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400212: Camera002.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400214: Camera002.Target|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400216: Camera002.Target|Camera001.Target|Take 001|BaseLayer
+    7400218: Camera002.Target|Camera001|Take 001|BaseLayer
+    7400220: Camera002.Target|Camera002.Target|Take 001|BaseLayer
+    7400222: Camera002.Target|Camera002|Take 001|BaseLayer
+    7400224: Camera002.Target|Camera003.Target|Take 001|BaseLayer
+    7400226: Camera002.Target|Camera003|Take 001|BaseLayer
+    7400228: Camera002.Target|Camera004.Target|Take 001|BaseLayer
+    7400230: Camera002.Target|Camera004|Take 001|BaseLayer
+    7400232: Camera002.Target|Camera005.Target|Take 001|BaseLayer
+    7400234: Camera002.Target|Camera005|Take 001|BaseLayer
+    7400236: Camera002.Target|SUN.Target|Take 001|BaseLayer
+    7400238: Camera002.Target|SUN|Take 001|BaseLayer
+    7400240: Camera002|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400242: Camera002|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400244: Camera002|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400246: Camera002|Camera001.Target|Take 001|BaseLayer
+    7400248: Camera002|Camera001|Take 001|BaseLayer
+    7400250: Camera002|Camera002.Target|Take 001|BaseLayer
+    7400252: Camera002|Camera002|Take 001|BaseLayer
+    7400254: Camera002|Camera003.Target|Take 001|BaseLayer
+    7400256: Camera002|Camera003|Take 001|BaseLayer
+    7400258: Camera002|Camera004.Target|Take 001|BaseLayer
+    7400260: Camera002|Camera004|Take 001|BaseLayer
+    7400262: Camera002|Camera005.Target|Take 001|BaseLayer
+    7400264: Camera002|Camera005|Take 001|BaseLayer
+    7400266: Camera002|SUN.Target|Take 001|BaseLayer
+    7400268: Camera002|SUN|Take 001|BaseLayer
+    7400270: Camera001.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400272: Camera001.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400274: Camera001.Target|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400276: Camera001.Target|Camera001.Target|Take 001|BaseLayer
+    7400278: Camera001.Target|Camera001|Take 001|BaseLayer
+    7400280: Camera001.Target|Camera002.Target|Take 001|BaseLayer
+    7400282: Camera001.Target|Camera002|Take 001|BaseLayer
+    7400284: Camera001.Target|Camera003.Target|Take 001|BaseLayer
+    7400286: Camera001.Target|Camera003|Take 001|BaseLayer
+    7400288: Camera001.Target|Camera004.Target|Take 001|BaseLayer
+    7400290: Camera001.Target|Camera004|Take 001|BaseLayer
+    7400292: Camera001.Target|Camera005.Target|Take 001|BaseLayer
+    7400294: Camera001.Target|Camera005|Take 001|BaseLayer
+    7400296: Camera001.Target|SUN.Target|Take 001|BaseLayer
+    7400298: Camera001.Target|SUN|Take 001|BaseLayer
+    7400300: Camera001|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400302: Camera001|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400304: Camera001|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400306: Camera001|Camera001.Target|Take 001|BaseLayer
+    7400308: Camera001|Camera001|Take 001|BaseLayer
+    7400310: Camera001|Camera002.Target|Take 001|BaseLayer
+    7400312: Camera001|Camera002|Take 001|BaseLayer
+    7400314: Camera001|Camera003.Target|Take 001|BaseLayer
+    7400316: Camera001|Camera003|Take 001|BaseLayer
+    7400318: Camera001|Camera004.Target|Take 001|BaseLayer
+    7400320: Camera001|Camera004|Take 001|BaseLayer
+    7400322: Camera001|Camera005.Target|Take 001|BaseLayer
+    7400324: Camera001|Camera005|Take 001|BaseLayer
+    7400326: Camera001|SUN.Target|Take 001|BaseLayer
+    7400328: Camera001|SUN|Take 001|BaseLayer
+    7400330: SUN.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400332: SUN.Target|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400334: SUN.Target|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400336: SUN.Target|Camera001.Target|Take 001|BaseLayer
+    7400338: SUN.Target|Camera001|Take 001|BaseLayer
+    7400340: SUN.Target|Camera002.Target|Take 001|BaseLayer
+    7400342: SUN.Target|Camera002|Take 001|BaseLayer
+    7400344: SUN.Target|Camera003.Target|Take 001|BaseLayer
+    7400346: SUN.Target|Camera003|Take 001|BaseLayer
+    7400348: SUN.Target|Camera004.Target|Take 001|BaseLayer
+    7400350: SUN.Target|Camera004|Take 001|BaseLayer
+    7400352: SUN.Target|Camera005.Target|Take 001|BaseLayer
+    7400354: SUN.Target|Camera005|Take 001|BaseLayer
+    7400356: SUN.Target|SUN.Target|Take 001|BaseLayer
+    7400358: SUN.Target|SUN|Take 001|BaseLayer
+    7400360: SUN|01_rocky_mountain_north_america 01|Take 001|BaseLayer
+    7400362: SUN|01_rocky_mountain_north_america 01|Take 001|BaseLayer.001
+    7400364: SUN|01_rocky_mountain_north_america 02|Take 001|BaseLayer
+    7400366: SUN|Camera001.Target|Take 001|BaseLayer
+    7400368: SUN|Camera001|Take 001|BaseLayer
+    7400370: SUN|Camera002.Target|Take 001|BaseLayer
+    7400372: SUN|Camera002|Take 001|BaseLayer
+    7400374: SUN|Camera003.Target|Take 001|BaseLayer
+    7400376: SUN|Camera003|Take 001|BaseLayer
+    7400378: SUN|Camera004.Target|Take 001|BaseLayer
+    7400380: SUN|Camera004|Take 001|BaseLayer
+    7400382: SUN|Camera005.Target|Take 001|BaseLayer
+    7400384: SUN|Camera005|Take 001|BaseLayer
+    7400386: SUN|SUN.Target|Take 001|BaseLayer
+    7400388: SUN|SUN|Take 001|BaseLayer
+    7400390: 01_rocky_mountain_north_america 01|01_rocky_mountain_north_america 01|Take
+      001|BaseLayer
+    7400392: 01_rocky_mountain_north_america 01|01_rocky_mountain_north_america 01|Take
+      001|BaseLayer.001
+    7400394: 01_rocky_mountain_north_america 01|01_rocky_mountain_north_america 02|Take
+      001|BaseLayer
+    7400396: 01_rocky_mountain_north_america 01|Camera001.Target|Take 001|BaseLayer
+    7400398: 01_rocky_mountain_north_america 01|Camera001|Take 001|BaseLayer
+    7400400: 01_rocky_mountain_north_america 01|Camera002.Target|Take 001|BaseLayer
+    7400402: 01_rocky_mountain_north_america 01|Camera002|Take 001|BaseLayer
+    7400404: 01_rocky_mountain_north_america 01|Camera003.Target|Take 001|BaseLayer
+    7400406: 01_rocky_mountain_north_america 01|Camera003|Take 001|BaseLayer
+    7400408: 01_rocky_mountain_north_america 01|Camera004.Target|Take 001|BaseLayer
+    7400410: 01_rocky_mountain_north_america 01|Camera004|Take 001|BaseLayer
+    7400412: 01_rocky_mountain_north_america 01|Camera005.Target|Take 001|BaseLayer
+    7400414: 01_rocky_mountain_north_america 01|Camera005|Take 001|BaseLayer
+    7400416: 01_rocky_mountain_north_america 01|SUN.Target|Take 001|BaseLayer
+    7400418: 01_rocky_mountain_north_america 01|SUN|Take 001|BaseLayer
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
