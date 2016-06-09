@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class S4_MainManager : MonoBehaviour {
 
@@ -17,6 +18,7 @@ public class S4_MainManager : MonoBehaviour {
 	[Range(0f,1f)]
 	public float lake_water_level = 1f; // 0 -> 1
 	public bool testegit = true;
+	public float waterLevel = 1f;
 
 	// Lake
 	protected float lake_generation_time = 3f;
@@ -30,6 +32,11 @@ public class S4_MainManager : MonoBehaviour {
 	public static float watermill_rotation_speed = 20f;
 
 	// Fixed Variables
+
+	protected Texture2D originalMountainTex = null;
+	protected Texture2D alteredMountainTex = null;
+	protected GameObject mountain = null;
+	protected GameObject mountainGO = null;
 	protected GameObject lakeGO = null;
 	protected GameObject environmentGO = null;
 	protected EllipsoidParticleEmitter snowEmitter = null;
@@ -73,6 +80,11 @@ public class S4_MainManager : MonoBehaviour {
 	{
 		// Setting Variables
 		environmentGO = GameObject.Find ("S4_Environment");
+		mountain = GameObject.Find ("01_rocky_mountain_north_america 01_MeshPart0");
+		mountainGO = GameObject.Find ("mountain");
+		originalMountainTex =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
+		alteredMountainTex = Instantiate (originalMountainTex);
+
 		lakeGO = GameObject.Find ("WaterBasicDaytime").gameObject;
 		snowEmitter = GameObject.Find ("Snow").GetComponent<EllipsoidParticleEmitter>();
 		rainParticleSystem = GameObject.Find ("Rain").GetComponent<ParticleSystem>();
@@ -87,6 +99,10 @@ public class S4_MainManager : MonoBehaviour {
 
 		ChangeWeatherStatus (WeatherStatus.Nothing);
 		StartCoroutine (PlayLakeSteam());
+	}
+
+	void OnQuit () {
+		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",originalMountainTex);
 	}
 
 	List<Vector3> FindPointsInsideMesh(GameObject go)
@@ -200,6 +216,14 @@ public class S4_MainManager : MonoBehaviour {
 	void Update()
 	{
 		// DEBUG ONLY!
+		if (Input.GetKeyDown (KeyCode.F)) {
+			//mountainGO.GetComponent<S4_Mountain> ().waterLevel -= 0.1f;
+			waterLevel -= 0.1f;
+		}
+		if (Input.GetKeyDown (KeyCode.G)) {
+			//mountainGO.GetComponent<S4_Mountain> ().waterLevel -= 0.1f;
+			waterLevel += 0.1f;
+		}
 		if(Input.GetKeyDown (KeyCode.R))
 			ChangeWeatherStatus (WeatherStatus.Raining);
 		if(Input.GetKeyDown(KeyCode.S))
@@ -212,6 +236,24 @@ public class S4_MainManager : MonoBehaviour {
 		// Lake Level
 		float lakePosY = lake_min_Y + (-lake_min_Y + lake_max_Y) * lake_water_level;
 		lakeGO.transform.position = new Vector3(lakeGO.transform.position.x,lakePosY,lakeGO.transform.position.z);
+	
+		//mountain level
+		Color32[] cor = new Color32[alteredMountainTex.width*alteredMountainTex.height];
+		for (int i = 0; i < cor.Length; i++) {
+			//	if (i < ((-30)*mountainGO.GetComponent<S4_Mountain> ().waterLevel + 31)) {
+			if (i < ((-10)*waterLevel + 11)) {
+				cor [i].r = 84;
+				cor [i].g = 55;
+				cor [i].b = 11;
+			} else {
+				cor [i].r = 255;
+				cor [i].g = 255;
+				cor [i].b = 255;
+			}
+		}
+		alteredMountainTex.SetPixels32 (cor);
+		alteredMountainTex.Apply ();
+		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",alteredMountainTex);
 	}
 
 
