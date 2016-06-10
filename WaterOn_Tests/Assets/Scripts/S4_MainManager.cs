@@ -20,6 +20,9 @@ public class S4_MainManager : MonoBehaviour {
 	public bool testegit = true;
 	public float waterLevel = 1f;
 
+	public GameObject riverpoint1;
+	public GameObject riverpoint2;
+
 	// Lake
 	protected float lake_generation_time = 3f;
 	protected float lake_cloud_levitation_time = 20f;
@@ -35,6 +38,7 @@ public class S4_MainManager : MonoBehaviour {
 
 	protected Texture2D originalMountainTex = null;
 	protected Texture2D alteredMountainTex = null;
+	protected GameObject river = null;
 	protected GameObject mountain = null;
 	protected GameObject mountainGO = null;
 	protected GameObject lakeGO = null;
@@ -82,6 +86,7 @@ public class S4_MainManager : MonoBehaviour {
 		environmentGO = GameObject.Find ("S4_Environment");
 		mountain = GameObject.Find ("01_rocky_mountain_north_america 01_MeshPart0");
 		mountainGO = GameObject.Find ("mountain");
+		river = GameObject.Find ("NewRiver");
 		originalMountainTex =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
 		alteredMountainTex = Instantiate (originalMountainTex);
 
@@ -96,6 +101,8 @@ public class S4_MainManager : MonoBehaviour {
 
 		// Find Lake Vertices Average Area
 		lakeCloudsStartingPoints = FindPointsInsideMesh (lakeGO);
+
+		river.GetComponent<S4_River> ().CreateRiver (); //Piece (riverpoint1,riverpoint2);
 
 		ChangeWeatherStatus (WeatherStatus.Nothing);
 		StartCoroutine (PlayLakeSteam());
