@@ -102,6 +102,7 @@ public class S4_River : MonoBehaviour {
 		riverPiece.AddComponent<MeshFilter> ().mesh = riverMesh;
 		Renderer rend = riverPiece.AddComponent<MeshRenderer> ();
 		rend.material = mat_river;
+		riverPiece.AddComponent <ScrollingUVs_Layers>();
 	}
 
 }
