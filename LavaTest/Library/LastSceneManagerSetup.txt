@@ -1,4 +1,0 @@
-sceneSetups:
-- path: D:/users/Alysson/GitHub/WaterOnLevel4/WaterOn_Tests/Assets/S4.unity
-  isLoaded: 1
-  isActive: 1
