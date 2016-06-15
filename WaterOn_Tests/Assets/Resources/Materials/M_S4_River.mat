@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: M_S4_River
-  m_Shader: {fileID: 4800000, guid: 6a151f652f5ba03458e9a7cd03ae88e8, type: 3}
+  m_Shader: {fileID: 4800000, guid: bec21333d7f8cf84cb75cab616acf589, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: 2000
@@ -19,9 +19,9 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 93a726948508cc14eab67fb1abe2daa8, type: 3}
+          m_Texture: {fileID: 2800000, guid: 348fa4d278c53ad4dacd07df1e63a248, type: 3}
           m_Scale: {x: 5.46, y: 1}
-          m_Offset: {x: -7.4159126, y: 0}
+          m_Offset: {x: -1.7199105, y: 0}
       data:
         first:
           name: _BumpMap
@@ -82,9 +82,9 @@ Material:
         first:
           name: _LavaTex
         second:
-          m_Texture: {fileID: 2800000, guid: 348fa4d278c53ad4dacd07df1e63a248, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
+          m_Texture: {fileID: 2800000, guid: 9c4abc92cf752bb439714f18276ec1e2, type: 3}
+          m_Scale: {x: 3.29, y: -0.53}
+          m_Offset: {x: -18.290749, y: 0}
       data:
         first:
           name: _Distort
@@ -92,6 +92,13 @@ Material:
           m_Texture: {fileID: 2800000, guid: 0ebfaeff4eb7328498165095f9cfc32f, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DirtTex
+        second:
+          m_Texture: {fileID: 2800000, guid: bfd675cc0db1d4656b75dc6d6ba91142, type: 3}
+          m_Scale: {x: 8.53, y: -1.77}
+          m_Offset: {x: 2.91, y: 1.13}
     m_Floats:
       data:
         first:
@@ -148,6 +155,10 @@ Material:
       data:
         first:
           name: _DistortY
+        second: 0
+      data:
+        first:
+          name: _Magnitude
         second: 0
     m_Colors:
       data:

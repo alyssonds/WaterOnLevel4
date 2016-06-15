@@ -8,33 +8,39 @@ public class S4_River : MonoBehaviour {
 	protected float river_average_width = 0.6f;
 
 	protected Material mat_river = null;
+	protected Material mat_river_encounter = null;
 
-	List<Transform> riverPoints = new List<Transform>();
-	GameObject riverParent = null;
-	GameObject riverGO = null;
-	//GameObject 
+	protected List<Transform> riverPoints = new List<Transform>();
+
 
 	// Use this for initialization
-	void Start () {
-		riverGO = new GameObject ("River2");
-		riverParent = GameObject.Find ("RiverParent");
-		foreach (Transform child in riverParent.transform)
-		{
-			riverPoints.Add (child);
-		}
+	void Awake () {
 		mat_river = Resources.Load ("Materials/M_S4_River", typeof(Material)) as Material;
-
+		mat_river_encounter = Resources.Load ("Materials/M_S4_River_Encounter", typeof(Material)) as Material;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		foreach (Transform child in this.gameObject.transform) {
+			if (child.gameObject.GetComponent<S4_RiverPiece> ().isBusy () && child.gameObject.GetComponent<MeshRenderer> ().material.GetFloat("_Magnitude") < 1.0f)
+				child.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude",child.gameObject.GetComponent<MeshRenderer> ().material.GetFloat("_Magnitude")+ 0.01f);
+		}
 	}
 
-	public void CreateRiver() {
-		
-		for (int i = 0; i < (riverPoints.Count - 1); i++) 
+	public void CreateRiver(GameObject riverParent) {
+		//clear the control points, in case not the first call
+		riverPoints.Clear ();
+
+		//initialize the control points
+		foreach (Transform child in riverParent.transform)
+		{
+			riverPoints.Add (child);
+		}
+		//create the river pieces
+		for (int i = 0; i < (riverPoints.Count - 1); i++) {
 			CreateRiverPiece (riverPoints [i], riverPoints [i + 1]);
+
+		}
 	}
 
 	private void CreateRiverPiece (Transform point1, Transform point2) 
@@ -98,11 +104,16 @@ public class S4_River : MonoBehaviour {
 
 		riverMesh.RecalculateNormals ();
 		GameObject riverPiece = new GameObject("RiverPiece");
-		riverPiece.transform.SetParent (riverGO.transform);
+		riverPiece.transform.SetParent (this.gameObject.transform);
 		riverPiece.AddComponent<MeshFilter> ().mesh = riverMesh;
 		Renderer rend = riverPiece.AddComponent<MeshRenderer> ();
-		rend.material = mat_river;
-		riverPiece.AddComponent <ScrollingUVs_Layers>();
+		if(point1.gameObject.CompareTag("DivisionTile"))
+			rend.material = mat_river_encounter;
+		else
+			rend.material = mat_river;
+		riverPiece.AddComponent <ScrollingUVs_Layers>().textureName = "_LavaTex";
+		//riverPiece.GetComponent <ScrollingUVs_Layers>().textureName = "_LavaTex";
+		riverPiece.AddComponent <S4_RiverPiece>().startingPoint = point1;
 	}
 
 }

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: D:/users/Alysson/codereps/WaterOn_Tests/Assets/S4.unity
+- path: Assets/S4.unity
   isLoaded: 1
   isActive: 1

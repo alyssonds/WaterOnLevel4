@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 
 public class S4_VillainFactory : MonoBehaviour {
 
-	public Transform[] positionsDykesOnRivers = null;
+	//protected Transform[] positionsDykesOnRivers = null;
+	protected List<Transform> positionsDykesOnRivers = new List<Transform> ();
 	public Transform startingBulletPosition = null;
 	public Transform dykeDestination = null;
 
@@ -27,7 +29,7 @@ public class S4_VillainFactory : MonoBehaviour {
 		dishAntenna = transform.Find ("DishAntenna").gameObject;
 		catapultOpeningLeft = transform.Find ("openingLeft").gameObject;
 		catapultOpeningRight = transform.Find ("openingRight").gameObject;
-
+		InitializeShootingPoints ();
 	//	ShotDykes ();
 	}
 
@@ -44,10 +46,10 @@ public class S4_VillainFactory : MonoBehaviour {
 	public void ShotDykes()
 	{
 		//StartCoroutine (ShootingDykes());
-		StartCoroutine(SimulateProjectile());
+		StartCoroutine(SimulateProjectile(GetRandomPositionOnRivers()));
 	}
 
-	IEnumerator SimulateProjectile()
+	IEnumerator SimulateProjectile(Vector3 targetPosition)
 	{
 		catapultIsOpen = true;
 		// opening doors
@@ -61,7 +63,7 @@ public class S4_VillainFactory : MonoBehaviour {
 		bullet.transform.position = startingBulletPosition.position;
 
 		// Calculate distance to target
-		float target_Distance = Vector3.Distance(bullet.transform.position, dykeDestination.transform.position);
+		float target_Distance = Vector3.Distance(bullet.transform.position, targetPosition);
 
 		// Calculate the velocity needed to throw the object to the target at specified angle.
 		float projectile_Velocity = target_Distance / (Mathf.Sin(2 * firingAngle * Mathf.Deg2Rad) / gravity);
@@ -74,7 +76,7 @@ public class S4_VillainFactory : MonoBehaviour {
 		float flightDuration = target_Distance / Vx;
 
 		// Rotate projectile to face the target.
-		bullet.transform.rotation = Quaternion.LookRotation(dykeDestination.transform.position - bullet.transform.position);
+		bullet.transform.rotation = Quaternion.LookRotation(targetPosition - bullet.transform.position);
 
 		float elapse_time = 0;
 
@@ -87,11 +89,30 @@ public class S4_VillainFactory : MonoBehaviour {
 			yield return null;
 		}
 
+		//DIZER QUE TA BUSY
+		foreach (Transform child in GameObject.Find("River2").transform) {
+			if (child.gameObject.GetComponent<S4_RiverPiece> ().startingPoint.position == targetPosition)
+				child.gameObject.GetComponent<S4_RiverPiece> ().SetBusy ();
+		}
+
 		//closing doors
 		catapultOpeningLeft.transform.DOScaleY(catLeftYtmp, catapultOpeningTime);
 		catapultOpeningRight.transform.DOScaleY (catRightYtmp, catapultOpeningTime);
 		yield return new WaitForSeconds (catapultOpeningTime);
 		catapultIsOpen = false;
+	}
+
+	void InitializeShootingPoints(){
+		Transform transform = GameObject.Find ("RiverPoints").transform;
+		foreach (Transform child in transform)
+		{
+			
+			foreach (Transform grandchild in child)
+			{
+				if (grandchild.gameObject.CompareTag ("ShootingTarget"))
+					positionsDykesOnRivers.Add (grandchild);
+			}
+		}
 	}
 
 	IEnumerator ShootingDykes()
@@ -152,6 +173,6 @@ public class S4_VillainFactory : MonoBehaviour {
 
 	protected Vector3 GetRandomPositionOnRivers()
 	{
-		return positionsDykesOnRivers[Random.Range(0,positionsDykesOnRivers.Length)].position;
+		return positionsDykesOnRivers[Random.Range(0,positionsDykesOnRivers.Count)].position;
 	}
 }

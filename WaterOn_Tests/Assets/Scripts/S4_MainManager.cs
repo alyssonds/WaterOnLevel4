@@ -86,7 +86,9 @@ public class S4_MainManager : MonoBehaviour {
 		environmentGO = GameObject.Find ("S4_Environment");
 		mountain = GameObject.Find ("01_rocky_mountain_north_america 01_MeshPart0");
 		mountainGO = GameObject.Find ("mountain");
-		river = GameObject.Find ("NewRiver");
+		//river = GameObject.Find ("NewRiver");
+		river = new GameObject ("River2");
+		river.AddComponent<S4_River> ();
 		originalMountainTex =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
 		alteredMountainTex = Instantiate (originalMountainTex);
 
@@ -102,7 +104,11 @@ public class S4_MainManager : MonoBehaviour {
 		// Find Lake Vertices Average Area
 		lakeCloudsStartingPoints = FindPointsInsideMesh (lakeGO);
 
-		river.GetComponent<S4_River> ().CreateRiver (); //Piece (riverpoint1,riverpoint2);
+		//create the rivers
+		foreach (Transform child in GameObject.Find ("RiverPoints").transform)
+		{
+			river.GetComponent<S4_River> ().CreateRiver (child.gameObject); 
+		}
 
 		ChangeWeatherStatus (WeatherStatus.Nothing);
 		StartCoroutine (PlayLakeSteam());
