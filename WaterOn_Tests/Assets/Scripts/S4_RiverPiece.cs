@@ -3,19 +3,26 @@ using System.Collections;
 
 public class S4_RiverPiece : MonoBehaviour {
 
+	public float dryingSpeed = 0.01f;
 	public Transform startingPoint { get; set;}
-	//private Vector3 startingPoint = new Vector3(0,0,0);
-	public bool busy = false;
+	public bool dry = false;
 
-	public bool isBusy() {
-		return busy;
+	public bool isDry() {
+		return dry;
 	}
 
-	public void SetBusy () {
-		busy = true;
+	public void SetDry () {
+		dry = true;
 	}
 	
-	public void SetFree () {
-		busy = false;
+	public void SetFull () {
+		dry = false;
+	}
+
+	void Update() {
+		if (dry && this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") < 1.0f)
+			this.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") + dryingSpeed);
+		if (!dry && this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") > 0.0f)
+			this.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") - dryingSpeed);
 	}
 }

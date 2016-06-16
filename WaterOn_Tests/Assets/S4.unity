@@ -994,6 +994,64 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 13
+--- !u!1001 &810470234
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 7.148241
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -6.8455644
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -29.021564
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0.0027259327
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0.23747915
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0.011149465
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.97132486
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_RootOrder
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 455002, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 123122, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 3c82482c960c5fb45aace551e73dbcd6, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &824121921
 GameObject:
   m_ObjectHideFlags: 0
@@ -1199,7 +1257,7 @@ Transform:
   - {fileID: 1552285995}
   - {fileID: 2062719797}
   m_Father: {fileID: 0}
-  m_RootOrder: 24
+  m_RootOrder: 25
 --- !u!1 &1142150592
 GameObject:
   m_ObjectHideFlags: 0
@@ -3043,10 +3101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lake_water_level: 1
-  testegit: 1
   waterLevel: 1
-  riverpoint1: {fileID: 0}
-  riverpoint2: {fileID: 0}
 --- !u!4 &1417409399
 Transform:
   m_ObjectHideFlags: 0

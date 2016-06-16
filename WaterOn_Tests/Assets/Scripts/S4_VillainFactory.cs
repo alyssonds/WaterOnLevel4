@@ -6,7 +6,7 @@ using DG.Tweening;
 public class S4_VillainFactory : MonoBehaviour {
 
 	//protected Transform[] positionsDykesOnRivers = null;
-	protected List<Transform> positionsDykesOnRivers = new List<Transform> ();
+	protected List<S4_ShootingPoint> positionsDykesOnRivers = new List<S4_ShootingPoint> ();
 	public Transform startingBulletPosition = null;
 	public Transform dykeDestination = null;
 
@@ -38,18 +38,32 @@ public class S4_VillainFactory : MonoBehaviour {
 		dishAntenna.transform.Rotate (Vector3.up * Time.deltaTime * dishAntennaTurningSpeed, Space.World);
 
 		// DEBUG ONLY!
-		if (Input.GetKeyDown (KeyCode.D))
-			ShotDykes ();
-
+	/*	if (Input.GetKeyDown (KeyCode.D)) {
+			int i = 0;
+			bool freeSpace = false;
+			//check if there are any free spaces
+			while (i < positionsDykesOnRivers.Count) {
+				if (!(positionsDykesOnRivers [i].IsBusy ())) {
+					freeSpace = true;
+					break;
+				}
+				i++;
+			}
+			if (freeSpace) {
+				ShotDykes ();
+			} else {
+				Debug.Log ("Theres no free space anymore");
+			}
+		}*/
 	}
 
-	public void ShotDykes()
+	public void ShotDykes(GameObject bullet, Vector3 position)
 	{
 		//StartCoroutine (ShootingDykes());
-		StartCoroutine(SimulateProjectile(GetRandomPositionOnRivers()));
+		StartCoroutine(SimulateProjectile(bullet, position));
 	}
 
-	IEnumerator SimulateProjectile(Vector3 targetPosition)
+	IEnumerator SimulateProjectile(GameObject bullet, Vector3 targetPosition)
 	{
 		catapultIsOpen = true;
 		// opening doors
@@ -59,7 +73,8 @@ public class S4_VillainFactory : MonoBehaviour {
 		catapultOpeningRight.transform.DOScaleY (0f, catapultOpeningTime);
 		yield return new WaitForSeconds (catapultOpeningTime);
 
-		GameObject bullet = Instantiate(Resources.Load("Prefab/S4_ClosedDyke", typeof(GameObject)) as GameObject);
+		//GameObject bullet = Instantiate(Resources.Load("Prefab/S4_ClosedDyke", typeof(GameObject)) as GameObject);
+		//bullet.AddComponent<S4_Dyke> ();
 		bullet.transform.position = startingBulletPosition.position;
 
 		// Calculate distance to target
@@ -73,14 +88,14 @@ public class S4_VillainFactory : MonoBehaviour {
 		float Vy = Mathf.Sqrt(projectile_Velocity) * Mathf.Sin(firingAngle * Mathf.Deg2Rad);
 
 		// Calculate flight time.
-		float flightDuration = target_Distance / Vx;
+		bulletPathTime = target_Distance / Vx;
 
 		// Rotate projectile to face the target.
 		bullet.transform.rotation = Quaternion.LookRotation(targetPosition - bullet.transform.position);
 
 		float elapse_time = 0;
 
-		while (elapse_time < flightDuration)
+		while (elapse_time < bulletPathTime)
 		{
 			bullet.transform.Translate(0, (Vy - (gravity * elapse_time)) * Time.deltaTime, Vx * Time.deltaTime);
 
@@ -90,10 +105,13 @@ public class S4_VillainFactory : MonoBehaviour {
 		}
 
 		//DIZER QUE TA BUSY
-		foreach (Transform child in GameObject.Find("River2").transform) {
-			if (child.gameObject.GetComponent<S4_RiverPiece> ().startingPoint.position == targetPosition)
-				child.gameObject.GetComponent<S4_RiverPiece> ().SetBusy ();
-		}
+		/*foreach (Transform riverParent in GameObject.Find("River2").transform) {
+			foreach (Transform riverPiece in riverParent) {
+				if (riverPiece.gameObject.GetComponent<S4_RiverPiece> ().startingPoint.position == targetPosition)
+					riverPiece.gameObject.GetComponent<S4_RiverPiece> ().SetDry ();
+			}
+		}*/
+		GameObject.Find ("River2").GetComponent<S4_River> ().AlterBranch (targetPosition,true);
 
 		//closing doors
 		catapultOpeningLeft.transform.DOScaleY(catLeftYtmp, catapultOpeningTime);
@@ -109,8 +127,10 @@ public class S4_VillainFactory : MonoBehaviour {
 			
 			foreach (Transform grandchild in child)
 			{
-				if (grandchild.gameObject.CompareTag ("ShootingTarget"))
-					positionsDykesOnRivers.Add (grandchild);
+				if (grandchild.gameObject.CompareTag ("ShootingTarget")) {
+					//create a new shooting point, false indicates it is free
+					positionsDykesOnRivers.Add (new S4_ShootingPoint (grandchild, false));
+				}
 			}
 		}
 	}
@@ -127,6 +147,7 @@ public class S4_VillainFactory : MonoBehaviour {
 
 		// Shooting
 		GameObject bullet = Instantiate(Resources.Load("Prefab/S4_ClosedDyke", typeof(GameObject)) as GameObject);
+
 		bullet.transform.position = startingBulletPosition.position;
 		// Setting Path Points
 		Vector3 highestPoint = new Vector3((bullet.transform.position.x + dykeDestination.transform.position.x)/2f, maximumHeight,(bullet.transform.position.z + dykeDestination.transform.position.z)/2f);
@@ -171,8 +192,13 @@ public class S4_VillainFactory : MonoBehaviour {
 		catapultIsOpen = false;
 	}
 
-	protected Vector3 GetRandomPositionOnRivers()
+/*	protected Vector3 GetRandomPositionOnRivers()
 	{
-		return positionsDykesOnRivers[Random.Range(0,positionsDykesOnRivers.Count)].position;
-	}
+		//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
+		int index = Random.Range (0, positionsDykesOnRivers.Count);
+		while(positionsDykesOnRivers[index].IsBusy())
+			index = Random.Range (0, positionsDykesOnRivers.Count);
+		positionsDykesOnRivers[index].SetBusy ();
+		return positionsDykesOnRivers[index].transform.position;
+	}*/
 }

@@ -9,7 +9,7 @@ public class Editor_S4_MainManager : Editor {
 	public override void OnInspectorGUI()
 	{
 		DrawDefaultInspector ();
-		S4_MainManager refScript = (S4_MainManager)target;
+	/*	S4_MainManager refScript = (S4_MainManager)target;
 
 		GameObject selectedGO = null;
 
@@ -30,7 +30,7 @@ public class Editor_S4_MainManager : Editor {
 
 		if (GUILayout.Button ("CREATE RIVER!"))
 			refScript.CreatingRiver ();
-
+*/
 	}
 		
 		

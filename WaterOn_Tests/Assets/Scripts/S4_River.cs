@@ -20,16 +20,49 @@ public class S4_River : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		foreach (Transform child in this.gameObject.transform) {
-			if (child.gameObject.GetComponent<S4_RiverPiece> ().isBusy () && child.gameObject.GetComponent<MeshRenderer> ().material.GetFloat("_Magnitude") < 1.0f)
-				child.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude",child.gameObject.GetComponent<MeshRenderer> ().material.GetFloat("_Magnitude")+ 0.01f);
+	/*void Update () {
+		bool busyBranch = false;
+		foreach (Transform riverParent in this.gameObject.transform) {
+			foreach (Transform riverPiece in riverParent) {
+				if (busyBranch == true && riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") < 1.0f)
+					riverPiece.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") + 0.01f);
+				else if (riverPiece.gameObject.GetComponent<S4_RiverPiece> ().isDry () && riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") < 1.0f) {
+					riverPiece.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") + 0.01f);
+					busyBranch = true;
+				}
+			}
+			busyBranch = false;
+		}
+	}*/
+
+	//Dry or fill branch. 
+	public void AlterBranch (Vector3 position, bool drying) {
+		bool branchStart = false;
+		//goes through all the river pieces
+		foreach (Transform riverParent in this.gameObject.transform) {
+			foreach (Transform riverPiece in riverParent) {
+				//finds the start of the branch
+				if (riverPiece.gameObject.GetComponent<S4_RiverPiece> ().startingPoint.position == position) {
+					branchStart = true;
+				}
+				//dries or fill branch
+				if (branchStart) {
+					if (drying)
+						riverPiece.gameObject.GetComponent<S4_RiverPiece> ().SetDry ();
+					else
+						riverPiece.gameObject.GetComponent<S4_RiverPiece> ().SetFull ();
+				}
+			}
+			branchStart = false;
 		}
 	}
 
 	public void CreateRiver(GameObject riverParent) {
 		//clear the control points, in case not the first call
 		riverPoints.Clear ();
+
+		GameObject riverBranch = new GameObject(riverParent.ToString());
+		riverBranch.transform.SetParent (this.gameObject.transform);
 
 		//initialize the control points
 		foreach (Transform child in riverParent.transform)
@@ -38,12 +71,12 @@ public class S4_River : MonoBehaviour {
 		}
 		//create the river pieces
 		for (int i = 0; i < (riverPoints.Count - 1); i++) {
-			CreateRiverPiece (riverPoints [i], riverPoints [i + 1]);
+			CreateRiverPiece (riverPoints [i], riverPoints [i + 1], riverBranch);
 
 		}
 	}
 
-	private void CreateRiverPiece (Transform point1, Transform point2) 
+	private void CreateRiverPiece (Transform point1, Transform point2, GameObject riverBranch) 
 	{
 		Mesh riverMesh = new Mesh ();
 		Vector3[] verts = new Vector3[4];
@@ -104,7 +137,7 @@ public class S4_River : MonoBehaviour {
 
 		riverMesh.RecalculateNormals ();
 		GameObject riverPiece = new GameObject("RiverPiece");
-		riverPiece.transform.SetParent (this.gameObject.transform);
+		riverPiece.transform.SetParent (riverBranch.transform);
 		riverPiece.AddComponent<MeshFilter> ().mesh = riverMesh;
 		Renderer rend = riverPiece.AddComponent<MeshRenderer> ();
 		if(point1.gameObject.CompareTag("DivisionTile"))
