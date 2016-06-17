@@ -30,7 +30,7 @@ public class S4_MainManager : MonoBehaviour {
 	protected float river_average_width = 0.6f;
 	// WaterMill
 	public static float watermill_rotation_speed = 20f;
-	protected List<S4_ShootingPoint> positionsDykesOnRivers = new List<S4_ShootingPoint> ();
+	public List<S4_ShootingPoint> positionsDykesOnRivers = new List<S4_ShootingPoint> ();
 
 	// Fixed Variables
 		protected Texture2D originalMountainTex = null;
@@ -273,8 +273,17 @@ public class S4_MainManager : MonoBehaviour {
 			if (Physics.Raycast (ray, out hit)) {
 				//TESTAR SE EH UM DYKE PRIMEIRO
 				if (hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube.transform.localScale.y >= 95.0f) {
-					GameObject.Destroy (hit.collider.gameObject);
-					//Debug.Log ("Destroy Cube");
+					Vector3 riverPosition = Vector3.zero;
+					foreach(S4_ShootingPoint shootingPoint in positionsDykesOnRivers) {
+						riverPosition = shootingPoint.GetRiverPositionOfDyke (hit.collider.gameObject);
+						if (riverPosition != Vector3.zero) {
+							shootingPoint.SetFree ();
+							river.GetComponent<S4_River> ().AlterBranch (riverPosition, false);
+							GameObject.Destroy (hit.collider.gameObject);
+							break;
+						}
+					}
+
 				}
 
 			}

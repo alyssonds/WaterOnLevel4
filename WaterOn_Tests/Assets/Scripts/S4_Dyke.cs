@@ -28,6 +28,10 @@ public class S4_Dyke : MonoBehaviour {
 			iceCube.transform.localScale -= new Vector3 (0,defreezingSpeed,0);
 	}
 
+	void OnDestroy() {
+		GameObject.Destroy (iceCube);
+		//this.gameObject
+	}
 	/*void OnMouseDown () {
 		if (!iceCube) { 
 			iceCube = Instantiate (Resources.Load ("Prefab/S4_IceBox", typeof(GameObject)) as GameObject);

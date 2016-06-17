@@ -16,13 +16,16 @@ public class S4_RiverPiece : MonoBehaviour {
 	}
 	
 	public void SetFull () {
+		Debug.Log ("RiverPiece SetFull");
 		dry = false;
 	}
 
 	void Update() {
 		if (dry && this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") < 1.0f)
 			this.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") + dryingSpeed);
-		if (!dry && this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") > 0.0f)
-			this.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") - dryingSpeed);
+		if (!dry && this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") > 0.0f) {
+			Debug.Log ("Filling River");
+			this.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", this.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") - dryingSpeed);	
+		}
 	}
 }
