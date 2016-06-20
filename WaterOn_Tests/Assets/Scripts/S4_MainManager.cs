@@ -29,8 +29,7 @@ public class S4_MainManager : MonoBehaviour {
 	// River
 	protected float river_average_width = 0.6f;
 	// WaterMill
-	public static float watermill_rotation_speed = 20f;
-	public List<S4_ShootingPoint> positionsDykesOnRivers = new List<S4_ShootingPoint> ();
+	public List<GameObject> positionsDykesOnRivers = new List<GameObject> ();
 
 	// Fixed Variables
 		protected Texture2D originalMountainTex = null;
@@ -227,7 +226,7 @@ public class S4_MainManager : MonoBehaviour {
 	}
 
 	void InitializeShootingPoints(){
-		Transform transform = GameObject.Find ("RiverPoints").transform;
+	/*	Transform transform = GameObject.Find ("RiverPoints").transform;
 		foreach (Transform child in transform)
 		{
 
@@ -238,6 +237,17 @@ public class S4_MainManager : MonoBehaviour {
 					positionsDykesOnRivers.Add (new S4_ShootingPoint (grandchild, false));
 				}
 			}
+		}*/
+		Transform transform = GameObject.Find ("River2").transform;
+		foreach (Transform child in transform)
+		{
+			foreach (Transform grandchild in child)
+			{
+				if (grandchild.gameObject.GetComponent<S4_RiverPiece>().IsShootingPoint()) {
+					//create a new shooting point, false indicates it is free
+					positionsDykesOnRivers.Add (grandchild.gameObject);
+				}
+			}
 		}
 	}
 
@@ -246,10 +256,10 @@ public class S4_MainManager : MonoBehaviour {
 		//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
 		int index = Random.Range (0, positionsDykesOnRivers.Count);
 		//while is busy, look for a new one
-		while(positionsDykesOnRivers[index].dyke)
+		while(positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().dyke)
 			index = Random.Range (0, positionsDykesOnRivers.Count);
 		
-		return positionsDykesOnRivers[index].transform.position;
+		return positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().startingPoint.position;
 	}
 
 	void Update()
@@ -274,11 +284,11 @@ public class S4_MainManager : MonoBehaviour {
 				//TESTAR SE EH UM DYKE PRIMEIRO
 				if (hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube.transform.localScale.y >= 95.0f) {
 					Vector3 riverPosition = Vector3.zero;
-					foreach(S4_ShootingPoint shootingPoint in positionsDykesOnRivers) {
-						riverPosition = shootingPoint.GetRiverPositionOfDyke (hit.collider.gameObject);
+					for (int i = 0; i < positionsDykesOnRivers.Count; i++) {
+						riverPosition = positionsDykesOnRivers[i].GetComponent<S4_RiverPiece>().GetRiverPositionOfDyke (hit.collider.gameObject);
 						if (riverPosition != Vector3.zero) {
-							shootingPoint.SetFree ();
-							river.GetComponent<S4_River> ().AlterBranch (riverPosition, false);
+							positionsDykesOnRivers[i].GetComponent<S4_RiverPiece>().SetFree ();
+							river.GetComponent<S4_River> ().FillBranch (riverPosition);
 							GameObject.Destroy (hit.collider.gameObject);
 							break;
 						}
@@ -294,7 +304,7 @@ public class S4_MainManager : MonoBehaviour {
 			bool freeSpace = false;
 			//check if there are any free spaces
 			while (i < positionsDykesOnRivers.Count) {
-				if (!(positionsDykesOnRivers [i].dyke)) {
+				if (!(positionsDykesOnRivers [i].GetComponent<S4_RiverPiece>().dyke)) {
 					freeSpace = true;
 					break;
 				}
@@ -306,11 +316,11 @@ public class S4_MainManager : MonoBehaviour {
 				//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
 				int index = Random.Range (0, positionsDykesOnRivers.Count);
 				//while is busy, look for a new one
-				while(positionsDykesOnRivers[index].dyke)
+				while(positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().dyke)
 					index = Random.Range (0, positionsDykesOnRivers.Count);
 
-				positionsDykesOnRivers [index].dyke = bullet;
-				villain.GetComponent<S4_VillainFactory>().ShotDykes(bullet, positionsDykesOnRivers[index].transform.position);
+				positionsDykesOnRivers [index].GetComponent<S4_RiverPiece>().dyke = bullet;
+				villain.GetComponent<S4_VillainFactory>().ShotDykes(bullet, positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().startingPoint.position);
 			} else {
 				Debug.Log ("Theres no free space anymore");
 			}

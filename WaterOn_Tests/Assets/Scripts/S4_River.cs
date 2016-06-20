@@ -19,24 +19,30 @@ public class S4_River : MonoBehaviour {
 		mat_river_encounter = Resources.Load ("Materials/M_S4_River_Encounter", typeof(Material)) as Material;
 	}
 	
-	// Update is called once per frame
-	/*void Update () {
-		bool busyBranch = false;
+
+	//Fill a branch. 
+	public void FillBranch (Vector3 position) {
+		bool branchStart = false;
+		//goes through all the river pieces
 		foreach (Transform riverParent in this.gameObject.transform) {
 			foreach (Transform riverPiece in riverParent) {
-				if (busyBranch == true && riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") < 1.0f)
-					riverPiece.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") + 0.01f);
-				else if (riverPiece.gameObject.GetComponent<S4_RiverPiece> ().isDry () && riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") < 1.0f) {
-					riverPiece.gameObject.GetComponent<MeshRenderer> ().material.SetFloat ("_Magnitude", riverPiece.gameObject.GetComponent<MeshRenderer> ().material.GetFloat ("_Magnitude") + 0.01f);
-					busyBranch = true;
+				//if the branch is blocked, break
+				if (riverPiece.GetComponent<S4_RiverPiece>().IsBlocked()){ 
+					break;
 				}
+				//finds the start of the branch
+				if (riverPiece.gameObject.GetComponent<S4_RiverPiece> ().startingPoint.position == position) {
+					branchStart = true;
+				}
+				//fill branch
+				if (branchStart)
+					riverPiece.gameObject.GetComponent<S4_RiverPiece> ().SetFull ();
 			}
-			busyBranch = false;
+			branchStart = false;
 		}
-	}*/
+	}
 
-	//Dry or fill branch. 
-	public void AlterBranch (Vector3 position, bool drying) {
+	public void DryBranch (Vector3 position) {
 		bool branchStart = false;
 		//goes through all the river pieces
 		foreach (Transform riverParent in this.gameObject.transform) {
@@ -46,12 +52,8 @@ public class S4_River : MonoBehaviour {
 					branchStart = true;
 				}
 				//dries or fill branch
-				if (branchStart) {
-					if (drying)
+				if (branchStart)
 						riverPiece.gameObject.GetComponent<S4_RiverPiece> ().SetDry ();
-					else
-						riverPiece.gameObject.GetComponent<S4_RiverPiece> ().SetFull ();
-				}
 			}
 			branchStart = false;
 		}
@@ -71,12 +73,26 @@ public class S4_River : MonoBehaviour {
 		}
 		//create the river pieces
 		for (int i = 0; i < (riverPoints.Count - 1); i++) {
-			CreateRiverPiece (riverPoints [i], riverPoints [i + 1], riverBranch);
+			//if it is the last piece
+			if (i == riverPoints.Count - 2) {  
+				GameObject watermill = null;
+				Debug.Log (riverParent.ToString ());
+				if(riverParent.ToString().Equals("RiverParent (UnityEngine.GameObject)"))
+					watermill = GameObject.Find ("WaterMill1");
+				else if (riverParent.ToString().Equals("RiverParent2 (UnityEngine.GameObject)"))
+					watermill = GameObject.Find ("WaterMill2");
+				else if (riverParent.ToString().Equals("RiverParent3 (UnityEngine.GameObject)"))
+					watermill = GameObject.Find ("WaterMill3");
+				Debug.Log (watermill.ToString());
+				CreateRiverPiece (riverPoints [i], riverPoints [i + 1], riverBranch, true, watermill);
+			}
+			else
+				CreateRiverPiece (riverPoints [i], riverPoints [i + 1], riverBranch);
 
 		}
 	}
 
-	private void CreateRiverPiece (Transform point1, Transform point2, GameObject riverBranch) 
+	private void CreateRiverPiece (Transform point1, Transform point2, GameObject riverBranch, bool lastPiece = false, GameObject watermill = null) 
 	{
 		Mesh riverMesh = new Mesh ();
 		Vector3[] verts = new Vector3[4];
@@ -147,6 +163,13 @@ public class S4_River : MonoBehaviour {
 		riverPiece.AddComponent <ScrollingUVs_Layers>().textureName = "_LavaTex";
 		//riverPiece.GetComponent <ScrollingUVs_Layers>().textureName = "_LavaTex";
 		riverPiece.AddComponent <S4_RiverPiece>().startingPoint = point1;
+		if (point1.CompareTag ("ShootingTarget"))
+			riverPiece.GetComponent<S4_RiverPiece> ().MakeTarget ();
+		if (lastPiece) {
+			riverPiece.GetComponent<S4_RiverPiece> ().MakeLastPiece ();
+			riverPiece.GetComponent<S4_RiverPiece> ().waterMill = watermill;
+		}
+
 	}
 
 }

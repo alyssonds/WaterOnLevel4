@@ -599,7 +599,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 138852, guid: e56474e4e910ac849aebf3dc447b0c55, type: 2}
       propertyPath: m_Name
-      value: WaterMill (1)
+      value: WaterMill2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e56474e4e910ac849aebf3dc447b0c55, type: 2}
@@ -3002,7 +3002,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 138852, guid: e56474e4e910ac849aebf3dc447b0c55, type: 2}
       propertyPath: m_Name
-      value: WaterMill (2)
+      value: WaterMill1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e56474e4e910ac849aebf3dc447b0c55, type: 2}
@@ -3102,6 +3102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lake_water_level: 1
   waterLevel: 1
+  positionsDykesOnRivers: []
 --- !u!4 &1417409399
 Transform:
   m_ObjectHideFlags: 0
@@ -3265,6 +3266,10 @@ Prefab:
     - target: {fileID: 485424, guid: e56474e4e910ac849aebf3dc447b0c55, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 138852, guid: e56474e4e910ac849aebf3dc447b0c55, type: 2}
+      propertyPath: m_Name
+      value: WaterMill3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e56474e4e910ac849aebf3dc447b0c55, type: 2}

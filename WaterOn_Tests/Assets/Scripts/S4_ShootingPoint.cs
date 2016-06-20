@@ -5,12 +5,12 @@ using System.Collections;
 public class S4_ShootingPoint {
 
 	public Transform transform { get; set;}
-	//private bool busy;
+	private bool busy = false;
 	public GameObject dyke = null;
 
 	public S4_ShootingPoint(Transform input, bool busy) {
 		transform = input;
-	//	this.busy = busy;
+		this.busy = busy;
 	}
 		
 	public Vector3 GetRiverPositionOfDyke(GameObject dyke) {
@@ -30,15 +30,15 @@ public class S4_ShootingPoint {
 	}
 
 	public void SetFree() {
+		this.busy = true;
 		this.dyke = null;
 	}
-	/*public bool IsBusy(){
+
+	public bool IsBusy(){
 		return busy;
 	}
 
-
-
-	public void SetBusy() {
-		busy = true;
-	}*/
+	//public void SetBusy() {
+	//	busy = true;
+	//}
 }

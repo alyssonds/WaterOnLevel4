@@ -6,7 +6,7 @@ using DG.Tweening;
 public class S4_VillainFactory : MonoBehaviour {
 
 	//protected Transform[] positionsDykesOnRivers = null;
-	protected List<S4_ShootingPoint> positionsDykesOnRivers = new List<S4_ShootingPoint> ();
+	protected List<GameObject> positionsDykesOnRivers = new List<GameObject> ();
 	public Transform startingBulletPosition = null;
 	public Transform dykeDestination = null;
 
@@ -29,32 +29,12 @@ public class S4_VillainFactory : MonoBehaviour {
 		dishAntenna = transform.Find ("DishAntenna").gameObject;
 		catapultOpeningLeft = transform.Find ("openingLeft").gameObject;
 		catapultOpeningRight = transform.Find ("openingRight").gameObject;
-		InitializeShootingPoints ();
-	//	ShotDykes ();
 	}
 
 	void Update () 
 	{
 		dishAntenna.transform.Rotate (Vector3.up * Time.deltaTime * dishAntennaTurningSpeed, Space.World);
 
-		// DEBUG ONLY!
-	/*	if (Input.GetKeyDown (KeyCode.D)) {
-			int i = 0;
-			bool freeSpace = false;
-			//check if there are any free spaces
-			while (i < positionsDykesOnRivers.Count) {
-				if (!(positionsDykesOnRivers [i].IsBusy ())) {
-					freeSpace = true;
-					break;
-				}
-				i++;
-			}
-			if (freeSpace) {
-				ShotDykes ();
-			} else {
-				Debug.Log ("Theres no free space anymore");
-			}
-		}*/
 	}
 
 	public void ShotDykes(GameObject bullet, Vector3 position)
@@ -111,28 +91,13 @@ public class S4_VillainFactory : MonoBehaviour {
 					riverPiece.gameObject.GetComponent<S4_RiverPiece> ().SetDry ();
 			}
 		}*/
-		GameObject.Find ("River2").GetComponent<S4_River> ().AlterBranch (targetPosition,true);
+		GameObject.Find ("River2").GetComponent<S4_River> ().DryBranch (targetPosition);
 
 		//closing doors
 		catapultOpeningLeft.transform.DOScaleY(catLeftYtmp, catapultOpeningTime);
 		catapultOpeningRight.transform.DOScaleY (catRightYtmp, catapultOpeningTime);
 		yield return new WaitForSeconds (catapultOpeningTime);
 		catapultIsOpen = false;
-	}
-
-	void InitializeShootingPoints(){
-		Transform transform = GameObject.Find ("RiverPoints").transform;
-		foreach (Transform child in transform)
-		{
-			
-			foreach (Transform grandchild in child)
-			{
-				if (grandchild.gameObject.CompareTag ("ShootingTarget")) {
-					//create a new shooting point, false indicates it is free
-					positionsDykesOnRivers.Add (new S4_ShootingPoint (grandchild, false));
-				}
-			}
-		}
 	}
 
 	IEnumerator ShootingDykes()
