@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using ProgressBar;
 
 public class S4_MainManager : MonoBehaviour {
 
@@ -41,6 +42,7 @@ public class S4_MainManager : MonoBehaviour {
 	protected GameObject environmentGO = null;
 	protected GameObject villain = null;
 	protected GameObject cloud = null;
+	protected GameObject progress = null;
 	protected EllipsoidParticleEmitter snowEmitter = null;
 	protected ParticleSystem rainParticleSystem = null;
 	//protected List<GameObject> cloudsGO = new List<GameObject> ();
@@ -89,7 +91,7 @@ public class S4_MainManager : MonoBehaviour {
 		river.AddComponent<S4_River> ();
 		originalMountainTex =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
 		alteredMountainTex = Instantiate (originalMountainTex);
-
+		progress = GameObject.Find ("ProgressBarUI");
 		lakeGO = GameObject.Find ("WaterBasicDaytime").gameObject;
 		snowEmitter = GameObject.Find ("Snow").GetComponent<EllipsoidParticleEmitter>();
 		rainParticleSystem = GameObject.Find ("Rain").GetComponent<ParticleSystem>();
@@ -341,6 +343,8 @@ public class S4_MainManager : MonoBehaviour {
 			//mountainGO.GetComponent<S4_Mountain> ().waterLevel -= 0.1f;
 			waterLevel += 0.1f;
 		}
+
+
 		if(Input.GetKeyDown (KeyCode.R))
 			ChangeWeatherStatus (WeatherStatus.Raining);
 		if(Input.GetKeyDown(KeyCode.S))
