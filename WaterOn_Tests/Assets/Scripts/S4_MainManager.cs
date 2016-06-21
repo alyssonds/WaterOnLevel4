@@ -40,9 +40,10 @@ public class S4_MainManager : MonoBehaviour {
 	protected GameObject lakeGO = null;
 	protected GameObject environmentGO = null;
 	protected GameObject villain = null;
+	protected GameObject cloud = null;
 	protected EllipsoidParticleEmitter snowEmitter = null;
 	protected ParticleSystem rainParticleSystem = null;
-	protected List<GameObject> cloudsGO = new List<GameObject> ();
+	//protected List<GameObject> cloudsGO = new List<GameObject> ();
 	protected Transform mountainPeak = null;
 	protected Material mat_river = null;
 
@@ -92,10 +93,10 @@ public class S4_MainManager : MonoBehaviour {
 		lakeGO = GameObject.Find ("WaterBasicDaytime").gameObject;
 		snowEmitter = GameObject.Find ("Snow").GetComponent<EllipsoidParticleEmitter>();
 		rainParticleSystem = GameObject.Find ("Rain").GetComponent<ParticleSystem>();
-		foreach (GameObject go in FindObjectsOfType(typeof(GameObject))) {
+		/*foreach (GameObject go in FindObjectsOfType(typeof(GameObject))) {
 			if (go.name.StartsWith ("Cloud"))
 				cloudsGO.Add (go);
-		}
+		}*/
 		mountainPeak = GameObject.Find ("MountainPeak").transform;
 
 		// Find Lake Vertices Average Area
@@ -199,10 +200,17 @@ public class S4_MainManager : MonoBehaviour {
 	IEnumerator PlayLakeSteam()
 	{
 		Vector3 rndPoint = lakeCloudsStartingPoints[Random.Range(0,lakeCloudsStartingPoints.Count)];
-		GameObject rndCloud = Instantiate(cloudsGO[Random.Range(0,cloudsGO.Count)]);
-		rndCloud.transform.localScale = Vector3.one * 5f;
+		//GameObject rndCloud = Instantiate(cloudsGO[Random.Range(0,cloudsGO.Count)]);
+
+		GameObject rndCloud = Instantiate(Resources.Load("Prefab/Cloud", typeof(GameObject)) as GameObject);
+		foreach (Transform child in rndCloud.transform) {
+			child.gameObject.SetActive (false);
+		}
+		rndCloud.transform.localScale = Vector3.one * 1.5f; 
+		//rndCloud.transform.localScale = Vector3.Scale(Vector3.one,new Vector3(1.1f,10f,1.1f));
 		rndCloud.transform.position = rndPoint;
-		rndCloud.transform.DOScale (Vector3.one * 50f, lake_cloud_levitation_time / 4f).SetEase(Ease.Linear);
+		//rndCloud.transform.DOScale (Vector3.one * 5f, lake_cloud_levitation_time / 4f).SetEase(Ease.Linear);
+		rndCloud.transform.DOScale (Vector3.Scale(Vector3.one,new Vector3(5f,8f,5f)), lake_cloud_levitation_time / 4f).SetEase(Ease.Linear);
 		rndCloud.transform.DOMoveY (18f, lake_cloud_levitation_time).SetEase(Ease.InOutQuad).OnComplete(() => {StartCoroutine(MoveCloudsToMountain(rndCloud));});
 		yield return new WaitForSeconds (lake_generation_time);
 		StartCoroutine(PlayLakeSteam ());
@@ -212,7 +220,7 @@ public class S4_MainManager : MonoBehaviour {
 		Vector3 toPosition = GetPointRandomInCircle (mountainPeak.transform.position, 5f);
 		cloud.transform.DOMove (toPosition, lake_cloud_toMountains_time).SetEase(Ease.InOutQuad);
 		yield return new WaitForSeconds (lake_cloud_toMountains_time);
-		cloud.GetComponent<Renderer> ().material.DOFade (0f, 5f);
+		//cloud.GetComponent<Renderer> ().material.DOFade (0f, 5f);
 		Destroy (cloud, 5f);
 		ChangeWeatherStatus (WeatherStatus.Snowing);
 	}
