@@ -1,0 +1,71 @@
+Initialize engine version: 5.3.0f4 (2524e04062b4)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 10.0]
+    Renderer: NVIDIA GeForce 9800 GTX+ (ID=0x613)
+    Vendor:   NVIDIA
+    VRAM:     495 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween43.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween43.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween46.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween46.dll into Unity Child Domain
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween50.dll (this message is harmless)
+Loading D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\DOTween50.dll into Unity Child Domain
+- Completed reload, in  0.108 seconds
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\System.dll (this message is harmless)
+desktop: 1680x1050 59Hz; virtual: 1680x1050 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+The referenced script on this Behaviour is missing!
+ 
+(Filename:  Line: 1498)
+
+The referenced script on this Behaviour (Game Object 'Main Camera') is missing!
+ 
+(Filename:  Line: 1655)
+
+UnloadTime: 2.092188 ms
+RiverParent (UnityEngine.GameObject)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+WaterMill1 (UnityEngine.GameObject)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+RiverParent2 (UnityEngine.GameObject)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+WaterMill2 (UnityEngine.GameObject)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+RiverParent3 (UnityEngine.GameObject)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+WaterMill3 (UnityEngine.GameObject)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
+
+Platform assembly: D:\users\Alysson\GitHub\WaterOnLevel4\WaterOn_Tests\S4prototypeVideo_Data\Managed\UnityScript.Lang.dll (this message is harmless)
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 1b08 -> priority: 1 
