@@ -15,13 +15,20 @@ public class S4_MainManager : MonoBehaviour {
 		Nothing
 	}
 
+	public enum LevelStatus
+	{
+		Danger,
+		Balancing,
+		Sustainable
+	}
+
 	// Change these variables
 	private float balanced_water_level = 0.7f;
 
 	private float lake_water_level = 1.0f; // 0 -> 1
 	private float mountain_water_level = 1.0f;
 
-
+	private float sust_level = 1.0f;
 
 	//values to balance the water in the scenario
 	private const float water_speed = 0.1f/3f;
@@ -34,6 +41,10 @@ public class S4_MainManager : MonoBehaviour {
 	protected float time_to_wait_video = 5f;
 
 	private bool cycle_started = false;
+
+	//values to glow the UI background when in danger mode
+	public float background_interpolate = 0.0f;
+	private bool growing = true;
 
 	// Lake
 	protected float lake_generation_time = 3f;
@@ -57,6 +68,7 @@ public class S4_MainManager : MonoBehaviour {
 	protected GameObject villain = null;
 	protected GameObject cloud = null;
 	protected GameObject progress = null;
+	protected GameObject backgroundUI = null;
 	protected EllipsoidParticleEmitter snowEmitter = null;
 	protected ParticleSystem rainParticleSystem = null;
 	protected List<GameObject> cloudsGO = new List<GameObject> ();
@@ -66,6 +78,7 @@ public class S4_MainManager : MonoBehaviour {
 	protected bool cloudCoroutineStopped = false;  
 
 	protected WeatherStatus _weatherStatus = WeatherStatus.Nothing;
+	protected LevelStatus _levelStatus = LevelStatus.Sustainable;
 	List<Vector3> lakeCloudsStartingPoints = new List<Vector3> ();
 
 	public struct Edge
@@ -111,6 +124,7 @@ public class S4_MainManager : MonoBehaviour {
 		originalMountainTex =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
 		alteredMountainTex = Instantiate (originalMountainTex);
 		progress = GameObject.Find ("ProgressBarUI");
+		backgroundUI = GameObject.Find ("Background");
 		lakeGO = GameObject.Find ("WaterBasicDaytime").gameObject;
 		snowEmitter = GameObject.Find ("Snow").GetComponent<EllipsoidParticleEmitter>();
 		rainParticleSystem = GameObject.Find ("Rain").GetComponent<ParticleSystem>();
@@ -222,6 +236,63 @@ public class S4_MainManager : MonoBehaviour {
 		_weatherStatus = status;
 	}
 
+	public void ChangeLevelStatus(LevelStatus status)
+	{
+		Debug.Log ("ChangeLevelStatus :: To " + status);
+		switch (status) 
+		{
+		case LevelStatus.Balancing:
+			if (_levelStatus == LevelStatus.Danger) {
+				StopCoroutine ("DangerGlow");
+				StartCoroutine ("StopGlow");
+			}
+			break;
+		case LevelStatus.Danger:
+			StartCoroutine ("DangerGlow");
+			break;
+		case LevelStatus.Sustainable:
+			break;
+		}
+		_levelStatus = status;
+	}
+
+	IEnumerator DangerGlow() {
+		if (background_interpolate <= 0.0f)
+			growing = true;
+		else if (background_interpolate >= 1.0f)
+			growing = false;
+
+		if (growing)
+			background_interpolate += 0.01f;
+		else
+			background_interpolate -= 0.01f;
+		backgroundUI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
+
+		yield return 0f;
+		StartCoroutine ("DangerGlow");
+	}
+
+	IEnumerator StopGlow() {
+		if (background_interpolate < 0.0f)
+			background_interpolate += 0.01f;
+		if (background_interpolate > 0.0f)
+			background_interpolate -= 0.01f;
+
+		//Test to see if it is zero
+		if (background_interpolate >= -0.1f && background_interpolate <= 0.1f)
+			background_interpolate = 0.0f;
+
+		backgroundUI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
+		yield return 0f;
+		if (Mathf.Approximately (background_interpolate, 0.0f)) {
+			growing = true;
+			StopCoroutine ("StopGlow");
+		}
+		else {
+			StartCoroutine ("StopGlow");
+		}
+	}
+
 	IEnumerator PlayLakeSteam()
 	{
 		Vector3 rndPoint = lakeCloudsStartingPoints[Random.Range(0,lakeCloudsStartingPoints.Count)];
@@ -251,6 +322,7 @@ public class S4_MainManager : MonoBehaviour {
 			ChangeWeatherStatus (WeatherStatus.Nothing);
 		}
 	}
+
 	IEnumerator MoveCloudsToMountain(GameObject cloud)
 	{
 		Vector3 toPosition = GetPointRandomInCircle (mountainPeak.transform.position, 2.5f);
@@ -403,9 +475,9 @@ public class S4_MainManager : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.N))
 			ChangeWeatherStatus (WeatherStatus.Nothing);
 		if (Input.GetKeyDown (KeyCode.C))
-			progress.GetComponent<S4_UIProgressBar> ().Decrease ();
+			ChangeLevelStatus(LevelStatus.Danger);
 		if (Input.GetKeyDown (KeyCode.V))
-			progress.GetComponent<S4_UIProgressBar> ().Increase ();
+			ChangeLevelStatus(LevelStatus.Balancing);
 		if(Input.GetKeyDown(KeyCode.Space))
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		if (Input.GetKeyDown (KeyCode.Escape))
@@ -444,12 +516,20 @@ public class S4_MainManager : MonoBehaviour {
 		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",alteredMountainTex);
 
 		pressure_to_balance = Mathf.Abs(lake_water_level - mountain_water_level);
+		//the bigger the pressure to balance, the smaller the sustainability level, and vice versa
+		sust_level = 1f - pressure_to_balance;
+		//move the progressbar
+		if (cycle_started)
+			progress.GetComponent<S4_UIProgressBar> ().SetNormalizedPosition (sust_level);
+		//danger level stat
+		if (sust_level < 0.4 && _levelStatus != LevelStatus.Danger)
+			ChangeLevelStatus (LevelStatus.Danger);
+		else if(sust_level > 0.4 && _levelStatus != LevelStatus.Balancing)
+			ChangeLevelStatus (LevelStatus.Balancing);
+		//calculate the mountain and lake pressure to balance
 		MountainPressure ();
 		LakePressure ();
 
-		Debug.Log ("Pressure to balance: " + pressure_to_balance);
-		Debug.Log ("Lake level: " + lake_water_level);
-		Debug.Log ("Mountain level: " + mountain_water_level);
 	}
 
 	void MountainPressure() {

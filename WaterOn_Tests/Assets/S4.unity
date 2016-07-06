@@ -418,7 +418,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 1312312282}
   filler: {fileID: 842553979}
-  minimumColor: {r: 0.29411766, g: 0.2627451, b: 0.17254902, a: 1}
 --- !u!1001 &110059065
 Prefab:
   m_ObjectHideFlags: 0
