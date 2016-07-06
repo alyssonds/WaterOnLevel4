@@ -16,12 +16,24 @@ public class S4_MainManager : MonoBehaviour {
 	}
 
 	// Change these variables
-	[Range(0f,1f)]
-	protected float lake_water_level = 0.7f; // 0 -> 1
-	[Range(0f,1f)]
-	protected float mountain_water_level = 0.7f;
+	private float balanced_water_level = 0.7f;
+
+	private float lake_water_level = 1.0f; // 0 -> 1
+	private float mountain_water_level = 1.0f;
+
+
+
+	//values to balance the water in the scenario
+	private const float water_speed = 0.1f/3f;
+	private float pressure_to_balance = 0.0f;
+	private float increase_mountain = 0.0f;
+	private float decrease_mountain = 0.0f;
+	private float increase_lake = 0.0f;
+	private float decrease_lake = 0.0f;
 
 	protected float time_to_wait_video = 5f;
+
+	private bool cycle_started = false;
 
 	// Lake
 	protected float lake_generation_time = 3f;
@@ -47,7 +59,7 @@ public class S4_MainManager : MonoBehaviour {
 	protected GameObject progress = null;
 	protected EllipsoidParticleEmitter snowEmitter = null;
 	protected ParticleSystem rainParticleSystem = null;
-	//protected List<GameObject> cloudsGO = new List<GameObject> ();
+	protected List<GameObject> cloudsGO = new List<GameObject> ();
 	protected Transform mountainPeak = null;
 	protected Material mat_river = null;
 
@@ -87,6 +99,9 @@ public class S4_MainManager : MonoBehaviour {
 	void Start () 
 	{
 		// Setting Variables
+		lake_water_level = balanced_water_level; // 0 -> 1
+		mountain_water_level = balanced_water_level;
+
 		environmentGO = GameObject.Find ("S4_Environment");
 		mountain = GameObject.Find ("01_rocky_mountain_north_america 01_MeshPart0");
 		mountainGO = GameObject.Find ("mountain");
@@ -176,7 +191,7 @@ public class S4_MainManager : MonoBehaviour {
 
 	public void ChangeWeatherStatus(WeatherStatus status)
 	{
-		//Debug.Log ("ChangeSnowStatus :: To " + status);
+		//Debug.Log ("ChangeWeatherStatus :: To " + status);
 		switch (status) 
 		{
 		case WeatherStatus.Nothing:
@@ -184,13 +199,15 @@ public class S4_MainManager : MonoBehaviour {
 			rainParticleSystem.Stop ();
 			break;
 		case WeatherStatus.Snowing:
-			if (_weatherStatus == WeatherStatus.Raining) 
-			{
+			if (_weatherStatus == WeatherStatus.Raining) {
 				rainParticleSystem.Stop ();
 				snowEmitter.emit = true;
-			} 
-			else if (_weatherStatus == WeatherStatus.Nothing)
+			} else if (_weatherStatus == WeatherStatus.Nothing)
 				snowEmitter.emit = true;
+			if (!cycle_started) {
+				cycle_started = true;
+				StartCoroutine (MoveWaterFromMountainToLake ());
+			}
 			break;
 		case WeatherStatus.Raining:
 			if (_weatherStatus == WeatherStatus.Snowing) 
@@ -211,6 +228,9 @@ public class S4_MainManager : MonoBehaviour {
 		//GameObject rndCloud = Instantiate(cloudsGO[Random.Range(0,cloudsGO.Count)]);
 
 		GameObject rndCloud = Instantiate(Resources.Load("Prefab/Cloud", typeof(GameObject)) as GameObject);
+		if(cycle_started)
+			lake_water_level = DecreaseWaterLevel (lake_water_level, water_speed*(1 + decrease_lake));
+		cloudsGO.Add (rndCloud);
 		foreach (Transform child in rndCloud.transform) {
 			child.gameObject.SetActive (false);
 		}
@@ -228,6 +248,7 @@ public class S4_MainManager : MonoBehaviour {
 		else {
 			cloudCoroutineStopped = true;
 			StopCoroutine (PlayLakeSteam ());
+			ChangeWeatherStatus (WeatherStatus.Nothing);
 		}
 	}
 	IEnumerator MoveCloudsToMountain(GameObject cloud)
@@ -236,8 +257,45 @@ public class S4_MainManager : MonoBehaviour {
 		cloud.transform.DOMove (toPosition, lake_cloud_toMountains_time).SetEase(Ease.InOutQuad);
 		yield return new WaitForSeconds (lake_cloud_toMountains_time);
 		//cloud.GetComponent<Renderer> ().material.DOFade (0f, 5f);
+		cloudsGO.Remove(cloud);
 		Destroy (cloud, 5f);
-		ChangeWeatherStatus (WeatherStatus.Snowing);
+		//MOVE WATER TO THE MOUNTAIN
+		if (cycle_started)
+			mountain_water_level = IncreaseWaterLevel (mountain_water_level,water_speed*(1 + increase_mountain)); 
+		if (cloudsGO.Count > 1)
+			ChangeWeatherStatus (WeatherStatus.Snowing);
+		else
+			ChangeWeatherStatus (WeatherStatus.Nothing);
+	}
+
+	IEnumerator MoveWaterFromMountainToLake() {
+
+		if (cycle_started) {
+			//MOVE WATER FROM THE MOUNTAIN TO THE LAKE
+			int blocked_branches = river.GetComponent<S4_River> ().BlockedBranches ();
+			//mountain_water_level -= water_speed * (1 + pressure_to_balance) * ((3 - blocked_branches) / 3f);
+			mountain_water_level = DecreaseWaterLevel (mountain_water_level, water_speed * (1 + pressure_to_balance + decrease_mountain) * ((3 - blocked_branches) / 3f));
+			lake_water_level = IncreaseWaterLevel (lake_water_level, water_speed * (1 + pressure_to_balance + increase_lake) * ((3 - blocked_branches) / 3f));
+
+		}
+		yield return new WaitForSeconds (lake_generation_time);
+		StartCoroutine (MoveWaterFromMountainToLake());
+	}
+
+	protected float DecreaseWaterLevel(float actual_water_level, float value_to_decrease) {
+		actual_water_level -= value_to_decrease;
+		if (actual_water_level >= 0)
+			return actual_water_level;
+		else
+			return 0f;
+	}
+
+	protected float IncreaseWaterLevel(float actual_water_level, float value_to_increase) {
+		actual_water_level += value_to_increase;
+		if (actual_water_level <= 1)
+			return actual_water_level;
+		else
+			return 1f;
 	}
 
 	Vector3 GetPointRandomInCircle(Vector3 pos, float radius)
@@ -249,18 +307,7 @@ public class S4_MainManager : MonoBehaviour {
 	}
 
 	void InitializeShootingPoints(){
-	/*	Transform transform = GameObject.Find ("RiverPoints").transform;
-		foreach (Transform child in transform)
-		{
 
-			foreach (Transform grandchild in child)
-			{
-				if (grandchild.gameObject.CompareTag ("ShootingTarget")) {
-					//create a new shooting point, false indicates it is free
-					positionsDykesOnRivers.Add (new S4_ShootingPoint (grandchild, false));
-				}
-			}
-		}*/
 		Transform transform = GameObject.Find ("River2").transform;
 		foreach (Transform child in transform)
 		{
@@ -285,58 +332,6 @@ public class S4_MainManager : MonoBehaviour {
 		return positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().startingPoint.position;
 	}
 
-	//METHODS FOR VIDEO
-	IEnumerator Event1()
-	{
-		lake_water_level = 0.6f;
-		progress.GetComponent<S4_UIProgressBar> ().Decrease ();
-		yield return new WaitForSeconds (time_to_wait_video);
-		lake_water_level = 0.5f;
-		mountain_water_level = 0.8f;
-		progress.GetComponent<S4_UIProgressBar> ().Decrease ();
-	}
-
-	IEnumerator Event2()
-	{
-		lake_water_level = 0.3f;
-		mountain_water_level = 0.9f;
-		progress.GetComponent<S4_UIProgressBar> ().Decrease ();
-		yield return new WaitForSeconds (time_to_wait_video/2f);
-		lake_water_level = 0.2f;
-		progress.GetComponent<S4_UIProgressBar> ().Decrease ();
-		yield return new WaitForSeconds (time_to_wait_video/2f);
-		progress.GetComponent<S4_UIProgressBar> ().Decrease ();
-		yield return new WaitForSeconds (time_to_wait_video/2f);
-		lake_water_level = 0.1f;
-		mountain_water_level = 1f;
-		progress.GetComponent<S4_UIProgressBar> ().Decrease ();
-	}
-
-	IEnumerator Event3()
-	{
-		lake_water_level = 0.2f;
-		progress.GetComponent<S4_UIProgressBar> ().Increase ();
-		yield return new WaitForSeconds (time_to_wait_video);
-		lake_water_level = 0.3f;
-		mountain_water_level = 0.9f;
-		progress.GetComponent<S4_UIProgressBar> ().Increase ();
-	}
-
-	IEnumerator Event4()
-	{
-		lake_water_level = 0.5f;
-		mountain_water_level = 0.8f;
-		progress.GetComponent<S4_UIProgressBar> ().Increase ();
-		yield return new WaitForSeconds (time_to_wait_video/2f);
-		progress.GetComponent<S4_UIProgressBar> ().Increase ();
-		yield return new WaitForSeconds (time_to_wait_video/2f);
-		lake_water_level = 0.6f;
-		progress.GetComponent<S4_UIProgressBar> ().Increase ();
-		yield return new WaitForSeconds (time_to_wait_video/2f);
-		lake_water_level = 0.7f;
-		mountain_water_level =  0.7f;
-		progress.GetComponent<S4_UIProgressBar> ().Increase ();
-	}
 
 	void Update()
 	{
@@ -401,39 +396,29 @@ public class S4_MainManager : MonoBehaviour {
 				Debug.Log ("Theres no free space anymore");
 			}
 		}
-		if (Input.GetKeyDown (KeyCode.F)) {
-			//mountainGO.GetComponent<S4_Mountain> ().waterLevel -= 0.1f;
-			mountain_water_level -= 0.1f;
-		}
-		if (Input.GetKeyDown (KeyCode.G)) {
-			//mountainGO.GetComponent<S4_Mountain> ().waterLevel -= 0.1f;
-			mountain_water_level += 0.1f;
-		}
-
-		if (Input.GetKeyDown (KeyCode.Z))
-			StartCoroutine (Event1());
-		if (Input.GetKeyDown (KeyCode.X))
-			StartCoroutine (Event2());
-		if (Input.GetKeyDown (KeyCode.C))
-			StartCoroutine (Event3());
-		if (Input.GetKeyDown (KeyCode.V))
-			StartCoroutine (Event4());
 		if(Input.GetKeyDown (KeyCode.R))
 			ChangeWeatherStatus (WeatherStatus.Raining);
 		if(Input.GetKeyDown(KeyCode.S))
 			ChangeWeatherStatus (WeatherStatus.Snowing);
 		if(Input.GetKeyDown(KeyCode.N))
 			ChangeWeatherStatus (WeatherStatus.Nothing);
+		if (Input.GetKeyDown (KeyCode.C))
+			progress.GetComponent<S4_UIProgressBar> ().Decrease ();
+		if (Input.GetKeyDown (KeyCode.V))
+			progress.GetComponent<S4_UIProgressBar> ().Increase ();
 		if(Input.GetKeyDown(KeyCode.Space))
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit ();
 
+		//if (cycle_started)
+			//StartCoroutine (MoveWaterFromMountainToLake ());
+
 		// Lake Level
 		float lakePosY = lake_min_Y + (-lake_min_Y + lake_max_Y) * lake_water_level;
 		lakeGO.transform.position = new Vector3(lakeGO.transform.position.x,lakePosY,lakeGO.transform.position.z);
 
-		if (lake_water_level > 0.3 && cloudCoroutineStopped) {
+		if (lake_water_level > 0.1 && cloudCoroutineStopped) {
 			cloudCoroutineStopped = false;
 			StartCoroutine (PlayLakeSteam ());
 		}
@@ -457,5 +442,41 @@ public class S4_MainManager : MonoBehaviour {
 		alteredMountainTex.SetPixels32 (cor);
 		alteredMountainTex.Apply ();
 		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",alteredMountainTex);
+
+		pressure_to_balance = Mathf.Abs(lake_water_level - mountain_water_level);
+		MountainPressure ();
+		LakePressure ();
+
+		Debug.Log ("Pressure to balance: " + pressure_to_balance);
+		Debug.Log ("Lake level: " + lake_water_level);
+		Debug.Log ("Mountain level: " + mountain_water_level);
+	}
+
+	void MountainPressure() {
+		float pressure_to_balance_mountain = mountain_water_level - balanced_water_level;
+		if (pressure_to_balance_mountain > 0) {
+			decrease_mountain = pressure_to_balance_mountain;
+			increase_mountain = 0.0f;
+		} else if (pressure_to_balance_mountain < 0) {
+			decrease_mountain = 0.0f;
+			increase_mountain = Mathf.Abs(pressure_to_balance_mountain);
+		} else {
+			decrease_mountain = 0.0f;
+			increase_mountain = 0.0f;
+		}
+	}
+
+	void LakePressure() {
+		float pressure_to_balance_lake = lake_water_level - balanced_water_level;
+		if (pressure_to_balance_lake > 0) {
+			decrease_lake = pressure_to_balance_lake;
+			increase_lake = 0.0f;
+		} else if (pressure_to_balance_lake < 0) {
+			decrease_lake = 0.0f;
+			increase_lake = Mathf.Abs(pressure_to_balance_lake);
+		} else {
+			decrease_lake = 0.0f;
+			increase_lake = 0.0f;
+		}
 	}
 }

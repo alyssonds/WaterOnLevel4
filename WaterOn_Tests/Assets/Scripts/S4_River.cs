@@ -42,6 +42,7 @@ public class S4_River : MonoBehaviour {
 		}
 	}
 
+	//Dry a branch
 	public void DryBranch (Vector3 position) {
 		bool branchStart = false;
 		//goes through all the river pieces
@@ -57,6 +58,22 @@ public class S4_River : MonoBehaviour {
 			}
 			branchStart = false;
 		}
+	}
+
+	//return the quantity of dry branches
+	public int BlockedBranches () {
+		int blocked_branches = 0;
+		foreach (Transform riverParent in this.gameObject.transform) {
+			foreach (Transform riverPiece in riverParent) {
+				//if the branch is blocked, break
+				if (riverPiece.GetComponent<S4_RiverPiece> ().IsBlocked ()) { 
+					blocked_branches++;
+					break;
+				} else
+					continue;
+			}
+		}
+		return blocked_branches;
 	}
 
 	public void CreateRiver(GameObject riverParent) {

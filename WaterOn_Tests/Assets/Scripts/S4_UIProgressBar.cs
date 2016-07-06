@@ -6,37 +6,26 @@ public class S4_UIProgressBar : MonoBehaviour {
 
 	public GameObject background;
 	public GameObject filler;
+	protected float offset = -8.0f;
+	protected float step = 0.0f;
 
-	[Range(0.0f,1.0f)]
-	protected float interpolationValue = 1f;
-	protected Color maximumColor;//, minimumColor;
-	public Color minimumColor;
 	// Use this for initialization
 	void Start () {
-		maximumColor = background.GetComponent<Image> ().color;
-	//	minimumColor = new Color (84,55,11);
+		filler.transform.localPosition = new Vector3 (offset + (background.transform.localPosition.x + background.transform.GetComponent<RectTransform> ().rect.width)/2f,
+			filler.transform.localPosition.y, filler.transform.localPosition.z);
+		step = background.transform.GetComponent<RectTransform> ().rect.width/20f;
 	}
 
 	public void Increase() {
-		filler.transform.localPosition = new Vector3 (filler.transform.localPosition.x + 20f, filler.transform.localPosition.y, filler.transform.localPosition.z);
+		filler.transform.localPosition = new Vector3 (filler.transform.localPosition.x + step, filler.transform.localPosition.y, filler.transform.localPosition.z);
 	}
 
 	public void Decrease() {
 	//	Debug.Log ("DECREASE");
-		filler.transform.localPosition = new Vector3 (filler.transform.localPosition.x - 20f, filler.transform.localPosition.y, filler.transform.localPosition.z);
+		filler.transform.localPosition = new Vector3 (filler.transform.localPosition.x - step, filler.transform.localPosition.y, filler.transform.localPosition.z);
 	}
 	// Update is called once per frame
-	/*void Update () {
-		Debug.Log (interpolationValue);
-		//background.GetComponent<Image> ().color = Color.LerpUnclamped (minimumColor, maximumColor, interpolationValue);
-
-		if (Input.GetKeyDown (KeyCode.X)) {
-			filler.transform.localPosition = new Vector3 (filler.transform.localPosition.x - 20f, filler.transform.localPosition.y, filler.transform.localPosition.z);
-		//	interpolationValue -= (1f / 18f); 
-		}
-		if (Input.GetKeyDown (KeyCode.C)) {
-			filler.transform.localPosition = new Vector3 (filler.transform.localPosition.x + 20f, filler.transform.localPosition.y, filler.transform.localPosition.z);
-		//	interpolationValue +=( 1f / 18f); 
-		}
-	}*/
+	void Update () {
+	
+	}
 }
