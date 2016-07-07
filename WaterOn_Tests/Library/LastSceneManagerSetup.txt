@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/S4.unity
+- path: C:/Users/User/Downloads/particlemovement_110/ParticleMovement/Assets/exampleScene.unity
   isLoaded: 1
   isActive: 1

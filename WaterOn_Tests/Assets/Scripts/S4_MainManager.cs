@@ -45,6 +45,8 @@ public class S4_MainManager : MonoBehaviour {
 	//values to glow the UI background when in danger mode
 	public float background_interpolate = 0.0f;
 	private bool growing = true;
+	private float time_to_check_sust = 3f;
+	private bool controling_sust = false;
 
 	// Lake
 	protected float lake_generation_time = 3f;
@@ -259,7 +261,7 @@ public class S4_MainManager : MonoBehaviour {
 	IEnumerator DangerGlow() {
 		if (background_interpolate <= 0.0f)
 			growing = true;
-		else if (background_interpolate >= 1.0f)
+		else if (background_interpolate >= 0.8f)
 			growing = false;
 
 		if (growing)
@@ -299,6 +301,9 @@ public class S4_MainManager : MonoBehaviour {
 		//GameObject rndCloud = Instantiate(cloudsGO[Random.Range(0,cloudsGO.Count)]);
 
 		GameObject rndCloud = Instantiate(Resources.Load("Prefab/Cloud", typeof(GameObject)) as GameObject);
+		rndCloud.tag = "Cloud";
+	//	rndCloud.getc
+		rndCloud.AddComponent<S4_Cloud> ();
 		if(cycle_started)
 			lake_water_level = DecreaseWaterLevel (lake_water_level, water_speed*(1 + decrease_lake));
 		cloudsGO.Add (rndCloud);
@@ -413,27 +418,32 @@ public class S4_MainManager : MonoBehaviour {
 		if (Input.GetMouseButton (0)) {
 			ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (ray, out hit)) {
-				//TESTAR SE EH UM DYKE PRIMEIRO
-				if (!(hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube))
-					hit.collider.gameObject.GetComponent<S4_Dyke> ().CreateCube ();
-				else if (hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube.transform.localScale.y < 95.0f)
-					hit.collider.gameObject.GetComponent<S4_Dyke> ().Freeze ();
+				if (hit.collider.gameObject.CompareTag ("Dyke")) {
+					if (!(hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube))
+						hit.collider.gameObject.GetComponent<S4_Dyke> ().CreateCube ();
+					else if (hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube.transform.localScale.y < 95.0f)
+						hit.collider.gameObject.GetComponent<S4_Dyke> ().Freeze ();
+				} 
+				else if (hit.collider.gameObject.CompareTag ("Cloud")) {
+					hit.collider.transform.DOPause ();
+				}
 			}
 		}
 
 		if (Input.GetMouseButtonDown (1)) {
 			ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (ray, out hit)) {
-				//TESTAR SE EH UM DYKE PRIMEIRO
-				if (hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube.transform.localScale.y >= 95.0f) {
-					Vector3 riverPosition = Vector3.zero;
-					for (int i = 0; i < positionsDykesOnRivers.Count; i++) {
-						riverPosition = positionsDykesOnRivers[i].GetComponent<S4_RiverPiece>().GetRiverPositionOfDyke (hit.collider.gameObject);
-						if (riverPosition != Vector3.zero) {
-							positionsDykesOnRivers[i].GetComponent<S4_RiverPiece>().SetFree ();
-							river.GetComponent<S4_River> ().FillBranch (riverPosition);
-							GameObject.Destroy (hit.collider.gameObject);
-							break;
+				if(hit.collider.gameObject.CompareTag("Dyke")) {
+					if (hit.collider.gameObject.GetComponent<S4_Dyke> ().iceCube.transform.localScale.y >= 95.0f) {
+						Vector3 riverPosition = Vector3.zero;
+						for (int i = 0; i < positionsDykesOnRivers.Count; i++) {
+							riverPosition = positionsDykesOnRivers [i].GetComponent<S4_RiverPiece> ().GetRiverPositionOfDyke (hit.collider.gameObject);
+							if (riverPosition != Vector3.zero) {
+								positionsDykesOnRivers [i].GetComponent<S4_RiverPiece> ().SetFree ();
+								river.GetComponent<S4_River> ().FillBranch (riverPosition);
+								GameObject.Destroy (hit.collider.gameObject);
+								break;
+							}
 						}
 					}
 
@@ -455,6 +465,7 @@ public class S4_MainManager : MonoBehaviour {
 			}
 			if (freeSpace) {
 				GameObject bullet = Instantiate(Resources.Load("Prefab/S4_ClosedDyke", typeof(GameObject)) as GameObject);
+				bullet.tag = "Dyke";
 				bullet.AddComponent<S4_Dyke> ();
 				//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
 				int index = Random.Range (0, positionsDykesOnRivers.Count);
@@ -519,8 +530,9 @@ public class S4_MainManager : MonoBehaviour {
 		//the bigger the pressure to balance, the smaller the sustainability level, and vice versa
 		sust_level = 1f - pressure_to_balance;
 		//move the progressbar
-		if (cycle_started)
-			progress.GetComponent<S4_UIProgressBar> ().SetNormalizedPosition (sust_level);
+		if (cycle_started & !controling_sust)
+			StartCoroutine (ControlLevelStatus(sust_level));
+			//progress.GetComponent<S4_UIProgressBar> ().SetNormalizedPosition (sust_level);
 		//danger level stat
 		if (sust_level < 0.4 && _levelStatus != LevelStatus.Danger)
 			ChangeLevelStatus (LevelStatus.Danger);
@@ -530,6 +542,13 @@ public class S4_MainManager : MonoBehaviour {
 		MountainPressure ();
 		LakePressure ();
 
+	}
+
+	IEnumerator ControlLevelStatus(float sustainability_level) {
+		controling_sust = true;
+		progress.GetComponent<S4_UIProgressBar> ().SetNormalizedPosition (sust_level);
+		yield return new WaitForSeconds (time_to_check_sust);
+		StartCoroutine (ControlLevelStatus(sust_level));
 	}
 
 	void MountainPressure() {

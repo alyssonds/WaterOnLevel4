@@ -6,6 +6,9 @@ TagManager:
   tags:
   - DivisionTile
   - ShootingTarget
+  - divisionTile
+  - Dyke
+  - Cloud
   layers:
   - Default
   - TransparentFX
