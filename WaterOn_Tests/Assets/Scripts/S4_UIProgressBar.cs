@@ -41,10 +41,7 @@ public class S4_UIProgressBar : MonoBehaviour {
 		filler.transform.localPosition = new Vector3 (normalized_pos, filler.transform.localPosition.y, filler.transform.localPosition.z);
 	}
 
-	public static bool FastApproximately(float a, float b, float threshold)
-	{
-		return ((a - b) < 0 ? ((a - b) * -1) : (a - b)) <= threshold;
-	}
+
 		
 	// Update is called once per frame
 	void Update () {

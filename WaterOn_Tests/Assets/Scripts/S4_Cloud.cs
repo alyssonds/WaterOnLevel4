@@ -5,6 +5,8 @@ using DG.Tweening;
 public class S4_Cloud : MonoBehaviour {
 
 	void OnTriggerEnter (Collider col) {
-		this.transform.DOPause ();
+		if(col.CompareTag("Umbrella")) {
+			this.transform.DOPause ();
+		}
 	}
 }
