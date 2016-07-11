@@ -9,4 +9,12 @@ public class S4_Cloud : MonoBehaviour {
 			this.transform.DOPause ();
 		}
 	}
+
+	public void Freeze () {
+		this.transform.DOPause();
+	}
+
+	public void Defreeze () {
+		this.transform.DOPlay();
+	}
 }

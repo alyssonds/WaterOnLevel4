@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class S4_VillainTurret : MonoBehaviour {
 
 	//variables for the idle movement
 	public float movementAmplitude = 0.25f;
-	public float speed = 1.0F;
+	public float idleSpeed = 1.0F;
 	private Vector3 initialPos;
 	private Vector3 startMarker;
 	private Vector3 endMarker;
@@ -16,19 +17,32 @@ public class S4_VillainTurret : MonoBehaviour {
 
 	//variables for the sight detection
 	public float fieldOfViewAngle = 110f;           // Number of degrees, centred on forward, for the enemy see.
+	public float movingSpeed = 2.0f;				// Speed with the turret moves while aiming 
 	private bool cloudInSight;                      // Whether or not the player is currently sighted.
 	private SphereCollider col;                     // Reference to the sphere collider trigger component.
-	private GameObject lockedCloud;
+	private GameObject lockedCloud;					// Cloud in lock to be shot
+
 
 	//variables for shooting
 	public AudioClip shotClip;                          // An audio clip to play when a shot happens.
+	public AudioClip chargeClip;                        // An audio clip to play when the turret charges.
 	public float flashIntensity = 3f;                   // The intensity of the light when the shot happens.
-	public float fadeSpeed = 10f;                       // How fast the light will fade after the shot.
+	public float timeToFade = 2f;                       // How fast the light will fade after the shot.
+	public float timeToCharge = 1f; 					// Time the turret takes to charge before shooting.
 	private LineRenderer laserShotLine;                 // Reference to the laser shot line renderer.
 	private Light laserShotLight;                       // Reference to the laser shot light.
-	//private SphereCollider col;                         // Reference to the sphere collider.
 	private Transform player;                           // Reference to the player's transform.
 	private bool shooting;                              // A bool to say whether or not the enemy is currently shooting.
+	private List<GameObject> frozenClouds = new List<GameObject>();
+
+	public enum TurretStatus
+	{
+		Idle,
+		Searching,
+		Charging,
+		Fire
+	}
+	protected TurretStatus _turretStatus = TurretStatus.Idle;
 
 	void Start () {
 		startTime = Time.time;
@@ -37,13 +51,19 @@ public class S4_VillainTurret : MonoBehaviour {
 		endMarker = new Vector3 (initialPos.x, initialPos.y + movementAmplitude, initialPos.z);
 		journeyLength = Vector3.Distance(startMarker, endMarker);
 		col = this.GetComponent<SphereCollider> ();	
+		laserShotLine = this.GetComponentInChildren<LineRenderer> ();
+		laserShotLight = this.GetComponentInChildren<Light> ();
+
 		cloudInSight = false;
+
+		laserShotLine.enabled = false;
+		laserShotLight.intensity = 0f;
 	}
 		
-	void OnTriggerStay (Collider other)
+	void OnTriggerEnter	 (Collider other)
 	{
-		// If the player has entered the trigger sphere...
-		if(other.CompareTag("Cloud") && !cloudInSight)
+		// If a cloud has entered the trigger sphere, and is not already frozen, and there was no other in sight
+		if(other.CompareTag("Cloud") && !CloudIsFrozen(other.gameObject) && !cloudInSight)
 		{
 			// By default the player is not in sight.
 			//playerInSight = false;
@@ -63,28 +83,121 @@ public class S4_VillainTurret : MonoBehaviour {
 					// ... and if the raycast hits the player...
 					if(hit.collider.gameObject.CompareTag("Cloud"))
 					{
+						
 						// ... the player is in sight.
 						cloudInSight = true;
-						this.transform.LookAt (hit.collider.transform);
-						lockedCloud = hit.collider.gameObject;
+						Debug.Log ("SHOOT");
+						StartCoroutine(Shoot (other.gameObject));
+						//FADE
+
+						//lockedCloud = hit.collider.gameObject;
 					}
 				}
 			}
 		}
 	}
 
+	IEnumerator Shoot (GameObject target)
+	{
+		Quaternion initialRotation = this.transform.rotation;
+		Vector3 initialPosition = this.transform.position;
 
-	void OnTriggerExit (Collider other)
+		//Aim
+		Quaternion neededRotation = Quaternion.LookRotation(target.transform.position - this.transform.position);
+		float acc = 0;
+		while(acc < 0.99f) {
+			this.transform.rotation = Quaternion.Slerp(this.transform.rotation, neededRotation, Time.deltaTime * movingSpeed);
+			yield return null;
+			acc += Time.deltaTime;
+		}
+		cloudInSight = true;
+		lockedCloud = target;
+
+		//Charge
+		float chargeSpeed = (1f - laserShotLight.intensity) / timeToCharge;
+		float elapse_time = 0f;
+		Debug.Log ("Charging");
+		AudioSource.PlayClipAtPoint(chargeClip, laserShotLight.transform.position);
+		while (elapse_time < timeToCharge)
+		{
+			laserShotLight.intensity = Mathf.Lerp(laserShotLight.intensity, 1f, chargeSpeed * Time.deltaTime);
+
+			elapse_time += Time.deltaTime;
+
+			yield return null;
+		}
+
+		Debug.Log ("Shooting");
+
+		//Shoot
+		// Set the initial position of the line renderer to the position of the muzzle.
+		laserShotLine.SetPosition(0, laserShotLine.transform.position);
+		// Set the end position of the player's centre of mass.
+		laserShotLine.SetPosition(1, target.transform.position);
+		// Turn on the line renderer.
+		laserShotLine.enabled = true;
+		// Make the light flash.
+		laserShotLight.intensity = flashIntensity;
+		// Play the gun shot clip at the position of the muzzle flare.
+		AudioSource.PlayClipAtPoint(shotClip, laserShotLight.transform.position);
+
+
+
+		//freeze the cloud
+		frozenClouds.Add(target);
+		target.gameObject.GetComponent<S4_Cloud> ().Freeze ();
+
+		yield return new WaitForSeconds(0.1f);
+
+		Debug.Log ("Decharging");
+		//After shooting
+		laserShotLine.enabled = false;
+
+		float fadeSpeed = (laserShotLight.intensity) / timeToFade;
+
+		elapse_time = 0f;
+		while (elapse_time < timeToFade)
+		{
+			laserShotLight.intensity = Mathf.Lerp(laserShotLight.intensity, 0f, fadeSpeed * Time.deltaTime);
+
+			elapse_time += Time.deltaTime;
+
+			yield return null;
+		}
+
+		acc = 0f;
+	//	neededRotation = Quaternion.LookRotation(initialPosition - this.transform.position);
+		while(acc < 1f) {
+			this.transform.rotation = Quaternion.Slerp(this.transform.rotation, initialRotation, Time.deltaTime * movingSpeed);
+			yield return null;
+			acc += Time.deltaTime;
+		}
+
+		cloudInSight = false;
+
+	}
+
+
+	/*void OnTriggerExit (Collider other)
 	{
 		// If the player leaves the trigger zone...
 		if(other.CompareTag("Cloud"))
 			// ... the player is not in sight.
 			cloudInSight = false;
+	}*/
+
+	public bool CloudIsFrozen (GameObject cloud) {
+		bool cloudIsFrozen = false;
+		foreach (GameObject frozen in frozenClouds) {
+			if (cloud.GetInstanceID () == frozen.GetInstanceID ())
+				cloudIsFrozen = true;
+		}
+		return cloudIsFrozen;
 	}
 
 	private void IdleMovement() {
 		//Create idle movement
-		float distCovered = (Time.time - startTime) * speed;
+		float distCovered = (Time.time - startTime) * idleSpeed;;
 		fracJourney = distCovered / journeyLength;
 		transform.position = Vector3.Lerp(startMarker, endMarker, fracJourney);
 
@@ -105,73 +218,28 @@ public class S4_VillainTurret : MonoBehaviour {
 		}
 	}
 
-	void Shot ()
-	{
-		// Set the initial position of the line renderer to the position of the muzzle.
-		laserShotLine.SetPosition(0, laserShotLine.transform.position);
-
-		// Set the end position of the player's centre of mass.
-		laserShotLine.SetPosition(1, player.position + Vector3.up * 1.5f);
-
-		// Turn on the line renderer.
-		laserShotLine.enabled = true;
-
-		// Make the light flash.
-		laserShotLight.intensity = flashIntensity;
-
-		// Play the gun shot clip at the position of the muzzle flare.
-		//	AudioSource.PlayClipAtPoint(shotClip, laserShotLight.transform.position);
-	}
 
 	void Update() {
 		
 		if(!cloudInSight)
 			IdleMovement ();
-		else
-			this.transform.LookAt (lockedCloud.transform);
+		//else
+		//	this.transform.LookAt (lockedCloud.transform);
 
 	}
 
-/*		void Awake ()
-		{
-			// Setting up the references.
-			anim = GetComponent<Animator>();
-			laserShotLine = GetComponentInChildren<LineRenderer>();
-			laserShotLight = laserShotLine.gameObject.light;
-			col = GetComponent<SphereCollider>();
-			player = GameObject.FindGameObjectWithTag(Tags.player).transform;
-			playerHealth = player.gameObject.GetComponent<PlayerHealth>();
-			hash = GameObject.FindGameObjectWithTag(Tags.gameController).GetComponent<HashIDs>();
-
-			// The line renderer and light are off to start.
-			laserShotLine.enabled = false;
-			laserShotLight.intensity = 0f;
-
-			// The scaledDamage is the difference between the maximum and the minimum damage.
-			scaledDamage = maximumDamage - minimumDamage;
+	void ChangeStatus (TurretStatus status){
+		switch (status) {
+		case TurretStatus.Idle:
+			//if(_turretStatus == TurretStatus.Fire)
+			break;
+		case TurretStatus.Searching:
+			break;
+		case TurretStatus.Charging:
+			break;
+		case TurretStatus.Fire:
+			break;
 		}
-
-
-		void Update ()
-		{
-			// Cache the current value of the shot curve.
-			float shot = anim.GetFloat(hash.shotFloat);
-
-			// If the shot curve is peaking and the enemy is not currently shooting...
-			if(shot > 0.5f && !shooting)
-				// ... shoot
-				Shoot();
-
-			// If the shot curve is no longer peaking...
-			if(shot < 0.5f)
-			{
-				// ... the enemy is no longer shooting and disable the line renderer.
-				shooting = false;
-				laserShotLine.enabled = false;
-			}
-
-			// Fade the light out.
-			laserShotLight.intensity = Mathf.Lerp(laserShotLight.intensity, 0f, fadeSpeed * Time.deltaTime);
-		}*/
+	}
 
 }
