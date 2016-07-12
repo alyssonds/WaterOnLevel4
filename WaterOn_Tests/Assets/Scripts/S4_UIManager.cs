@@ -6,12 +6,12 @@ public class S4_UIManager : MonoBehaviour {
 	public float time_to_check_sust = 3f;
 	private float background_interpolate = 0.0f;
 	private bool growing = true;
-	protected GameObject backgroundUI = null;
+	protected GameObject background_UI = null;
 	protected GameObject progress = null;
 	S4_WaterCycleManager water_manager;
 
 	void Awake() {
-		backgroundUI = GameObject.Find ("Background");
+		background_UI = GameObject.Find ("Background");
 		progress = GameObject.Find ("ProgressBarUI");
 		water_manager = GameObject.Find("S4_MainManager").GetComponent<S4_WaterCycleManager> ();
 	}
@@ -26,7 +26,7 @@ public class S4_UIManager : MonoBehaviour {
 			background_interpolate += 0.01f;
 		else
 			background_interpolate -= 0.01f;
-		backgroundUI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
+		background_UI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
 
 		yield return null;
 		StartCoroutine ("DangerGlow");
@@ -44,7 +44,7 @@ public class S4_UIManager : MonoBehaviour {
 		if (background_interpolate >= -0.1f && background_interpolate <= 0.1f)
 			background_interpolate = 0.0f;
 
-		backgroundUI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
+		background_UI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
 		yield return null;
 		if (Mathf.Approximately (background_interpolate, 0.0f)) {
 			growing = true;

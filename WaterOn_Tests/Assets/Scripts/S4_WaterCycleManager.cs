@@ -21,26 +21,23 @@ public class S4_WaterCycleManager : MonoBehaviour {
 	private float pressure_to_balance = 0.0f;
 
 	// Lake
-	protected GameObject lakeGO = null;
-	protected float lake_generation_time = 3f;
-	protected float lake_cloud_levitation_time = 20f;
-	protected float lake_cloud_toMountains_time = 20f;
+	public float lake_generation_time = 3f;
+	public float lake_cloud_levitation_time = 20f;
+	public float lake_cloud_toMountains_time = 20f;
+	protected GameObject lake = null;
 	protected float lake_min_Y = -15.1f;
 	protected float lake_max_Y = -9.77f;
-	List<Vector3> lakeCloudsStartingPoints = new List<Vector3> ();
+	List<Vector3> lake_clouds_starting_points = new List<Vector3> ();
 
 	//Clouds
-	protected List<GameObject> cloudsGO = new List<GameObject> ();
-	protected bool cloudCoroutineStopped = false;  
+	protected List<GameObject> clouds = new List<GameObject> ();
+	protected bool cloud_coroutine_stopped = false;  
 
 	//Mountain
 	protected GameObject mountain = null;
-	protected Texture2D originalMountainTex = null;
-	protected Texture2D alteredMountainTex = null;
-	protected Transform mountainPeak = null;
-
-	//Rivers
-//	protected GameObject river = null;
+	protected Texture2D original_mountain_texture = null;
+	protected Texture2D altered_mountain_texture = null;
+	protected Transform mountain_peak = null;
 
 	//Weather
 	public enum WeatherStatus
@@ -49,24 +46,24 @@ public class S4_WaterCycleManager : MonoBehaviour {
 		Raining,
 		Nothing
 	}
-	protected WeatherStatus _weatherStatus = WeatherStatus.Nothing;
-	protected EllipsoidParticleEmitter snowEmitter = null;
-	protected ParticleSystem rainParticleSystem = null;
+	protected WeatherStatus _weather_status = WeatherStatus.Nothing;
+	protected EllipsoidParticleEmitter snow_emitter = null;
+	protected ParticleSystem rain_particle_system = null;
 
 	void Awake() {
 		// Setting Variables
 		lake_water_level = balanced_water_level; // 0 -> 1
 		mountain_water_level = balanced_water_level;
-		lakeGO = GameObject.Find ("WaterBasicDaytime").gameObject;
+		lake = GameObject.Find ("WaterBasicDaytime").gameObject;
 		mountain = GameObject.Find ("01_rocky_mountain_north_america 01_MeshPart0");
-		originalMountainTex =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
-		alteredMountainTex = Instantiate (originalMountainTex);
-		mountainPeak = GameObject.Find ("MountainPeak").transform;
-		snowEmitter = GameObject.Find ("Snow").GetComponent<EllipsoidParticleEmitter>();
-		rainParticleSystem = GameObject.Find ("Rain").GetComponent<ParticleSystem>();
+		original_mountain_texture =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
+		altered_mountain_texture = Instantiate (original_mountain_texture);
+		mountain_peak = GameObject.Find ("MountainPeak").transform;
+		snow_emitter = GameObject.Find ("Snow").GetComponent<EllipsoidParticleEmitter>();
+		rain_particle_system = GameObject.Find ("Rain").GetComponent<ParticleSystem>();
 
 		// Find Lake Vertices Average Area
-		lakeCloudsStartingPoints = S4_Utils.FindPointsInsideMesh (lakeGO);
+		lake_clouds_starting_points = S4_Utils.FindPointsInsideMesh (lake);
 
 		ChangeWeatherStatus (WeatherStatus.Nothing);
 
@@ -74,7 +71,7 @@ public class S4_WaterCycleManager : MonoBehaviour {
 	}
 
 	void OnQuit () {
-		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",originalMountainTex);
+		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",original_mountain_texture);
 	}
 
 
@@ -84,42 +81,42 @@ public class S4_WaterCycleManager : MonoBehaviour {
 		switch (status) 
 		{
 		case WeatherStatus.Nothing:
-			snowEmitter.emit = false;
-			rainParticleSystem.Stop ();
+			snow_emitter.emit = false;
+			rain_particle_system.Stop ();
 			break;
 		case WeatherStatus.Snowing:
-			if (_weatherStatus == WeatherStatus.Raining) {
-				rainParticleSystem.Stop ();
-				snowEmitter.emit = true;
-			} else if (_weatherStatus == WeatherStatus.Nothing)
-				snowEmitter.emit = true;
+			if (_weather_status == WeatherStatus.Raining) {
+				rain_particle_system.Stop ();
+				snow_emitter.emit = true;
+			} else if (_weather_status == WeatherStatus.Nothing)
+				snow_emitter.emit = true;
 			if (!cycle_started) {
 				cycle_started = true;
 				StartCoroutine (MoveWaterFromMountainToLake ());
 			}
 			break;
 		case WeatherStatus.Raining:
-			if (_weatherStatus == WeatherStatus.Snowing) 
+			if (_weather_status == WeatherStatus.Snowing) 
 			{
-				snowEmitter.emit = false;
-				rainParticleSystem.Play ();
+				snow_emitter.emit = false;
+				rain_particle_system.Play ();
 			} 
-			else if (_weatherStatus == WeatherStatus.Nothing)
-				rainParticleSystem.Play ();
+			else if (_weather_status == WeatherStatus.Nothing)
+				rain_particle_system.Play ();
 			break;
 		}
-		_weatherStatus = status;
+		_weather_status = status;
 	}
 
 	IEnumerator PlayLakeSteam()
 	{
-		Vector3 rndPoint = lakeCloudsStartingPoints[Random.Range(0,lakeCloudsStartingPoints.Count)];
+		Vector3 rndPoint = lake_clouds_starting_points[Random.Range(0,lake_clouds_starting_points.Count)];
 		GameObject rndCloud = Instantiate(Resources.Load("Prefab/Cloud", typeof(GameObject)) as GameObject);
 		rndCloud.tag = "Cloud";
 		rndCloud.AddComponent<S4_Cloud> ();
 		if(cycle_started)
 			lake_water_level = DecreaseWaterLevel (lake_water_level, water_speed*(1 + decrease_lake));
-		cloudsGO.Add (rndCloud);
+		clouds.Add (rndCloud);
 		foreach (Transform child in rndCloud.transform) {
 			child.gameObject.SetActive (false);
 		}
@@ -131,11 +128,11 @@ public class S4_WaterCycleManager : MonoBehaviour {
 		rndCloud.transform.DOMoveY (18f, lake_cloud_levitation_time).SetEase(Ease.InOutQuad).OnComplete(() => {StartCoroutine(MoveCloudsToMountain(rndCloud));});
 		yield return new WaitForSeconds (lake_generation_time);
 		if (lake_water_level > 0.1f) {
-			cloudCoroutineStopped = false;
+			cloud_coroutine_stopped = false;
 			StartCoroutine (PlayLakeSteam ());
 		}
 		else {
-			cloudCoroutineStopped = true;
+			cloud_coroutine_stopped = true;
 			StopCoroutine (PlayLakeSteam ());
 			ChangeWeatherStatus (WeatherStatus.Nothing);
 		}
@@ -143,16 +140,16 @@ public class S4_WaterCycleManager : MonoBehaviour {
 
 	IEnumerator MoveCloudsToMountain(GameObject cloud)
 	{
-		Vector3 toPosition = S4_Utils.GetPointRandomInCircle (mountainPeak.transform.position, 2.5f);
+		Vector3 toPosition = S4_Utils.GetPointRandomInCircle (mountain_peak.transform.position, 2.5f);
 		cloud.transform.DOMove (toPosition, lake_cloud_toMountains_time).SetEase(Ease.InOutQuad);
 		yield return new WaitForSeconds (lake_cloud_toMountains_time);
 		//cloud.GetComponent<Renderer> ().material.DOFade (0f, 5f);
-		cloudsGO.Remove(cloud);
+		clouds.Remove(cloud);
 		Destroy (cloud, 5f);
 		//MOVE WATER TO THE MOUNTAIN
 		if (cycle_started)
 			mountain_water_level = IncreaseWaterLevel (mountain_water_level,water_speed*(1 + increase_mountain)); 
-		if (cloudsGO.Count > 1)
+		if (clouds.Count > 1)
 			ChangeWeatherStatus (WeatherStatus.Snowing);
 		else
 			ChangeWeatherStatus (WeatherStatus.Nothing);
@@ -224,16 +221,16 @@ public class S4_WaterCycleManager : MonoBehaviour {
 
 	public void UpdateLakeWaterLevel () {
 		float lakePosY = lake_min_Y + (-lake_min_Y + lake_max_Y) * lake_water_level;
-		lakeGO.transform.position = new Vector3(lakeGO.transform.position.x,lakePosY,lakeGO.transform.position.z);
-		if (lake_water_level > 0.1 && cloudCoroutineStopped) {
-			cloudCoroutineStopped = false;
+		lake.transform.position = new Vector3(lake.transform.position.x,lakePosY,lake.transform.position.z);
+		if (lake_water_level > 0.1 && cloud_coroutine_stopped) {
+			cloud_coroutine_stopped = false;
 			StartCoroutine (PlayLakeSteam ());
 		}
 
 	}
 
 	public void UpdateMountainWaterLevel() {
-		Color32[] cor = new Color32[alteredMountainTex.width*alteredMountainTex.height];
+		Color32[] cor = new Color32[altered_mountain_texture.width*altered_mountain_texture.height];
 		for (int i = 0; i < cor.Length; i++) {
 			if (i < ((-10)*mountain_water_level + 11)) {
 				cor [i].r = 84;
@@ -245,9 +242,9 @@ public class S4_WaterCycleManager : MonoBehaviour {
 				cor [i].b = 255;
 			}
 		}
-		alteredMountainTex.SetPixels32 (cor);
-		alteredMountainTex.Apply ();
-		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",alteredMountainTex);
+		altered_mountain_texture.SetPixels32 (cor);
+		altered_mountain_texture.Apply ();
+		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",altered_mountain_texture);
 	}
 
 	public float GetSustainabilityLevel() {

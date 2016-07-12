@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine.SceneManagement;
-using System.Linq;
 
 public class S4_MainManager : MonoBehaviour {
 
@@ -35,27 +32,6 @@ public class S4_MainManager : MonoBehaviour {
 		water_manager = this.GetComponent<S4_WaterCycleManager> ();
 		interaction_manager = this.GetComponent<S4_InteractionManager> ();
 	}
-
-	//Controls the overall status of the level
-	public void ChangeLevelStatus(LevelStatus status)
-	{
-		//Debug.Log ("ChangeLevelStatus :: To " + status);
-		switch (status) 
-		{
-		case LevelStatus.Balancing:
-			if (_levelStatus == LevelStatus.Danger) {
-				ui_manager.StopDangerGlow ();
-			}
-			break;
-		case LevelStatus.Danger:
-			ui_manager.StartDangerGlow ();
-			break;
-		case LevelStatus.Sustainable:
-			break;
-		}
-		_levelStatus = status;
-	}
-
 
 	void Update()
 	{
@@ -90,6 +66,26 @@ public class S4_MainManager : MonoBehaviour {
 		water_manager.UpdateMountainPressure ();
 		water_manager.UpdateLakePressure ();
 
+	}
+
+	//Controls the overall status of the level
+	public void ChangeLevelStatus(LevelStatus status)
+	{
+		//Debug.Log ("ChangeLevelStatus :: To " + status);
+		switch (status) 
+		{
+		case LevelStatus.Balancing:
+			if (_levelStatus == LevelStatus.Danger) {
+				ui_manager.StopDangerGlow ();
+			}
+			break;
+		case LevelStatus.Danger:
+			ui_manager.StartDangerGlow ();
+			break;
+		case LevelStatus.Sustainable:
+			break;
+		}
+		_levelStatus = status;
 	}
 		
 }

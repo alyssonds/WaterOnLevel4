@@ -3,9 +3,10 @@ using System.Collections;
 
 public class S4_Dyke : MonoBehaviour {
 
-	public GameObject iceCube = null;
-	public float freezingSpeed = 5.0f;
-	public float defreezingSpeed = 2.5f;
+	public GameObject ice_cube = null;
+	public float ice_cube_size = 95.0f;
+	//public float freezing_speed = 5.0f;
+	public float defreezing_speed = 2.5f;
 
 	// Use this for initialization
 	void Awake () {
@@ -13,39 +14,23 @@ public class S4_Dyke : MonoBehaviour {
 	}
 	
 	public void CreateCube() {
-		iceCube = Instantiate (Resources.Load ("Prefab/S4_IceBox", typeof(GameObject)) as GameObject);
-		iceCube.transform.position = this.transform.position + new Vector3 (0, 0, -0.95f);
-		iceCube.transform.localScale = new Vector3 (95, 0, 95);
+		ice_cube = Instantiate (Resources.Load ("Prefab/S4_IceBox", typeof(GameObject)) as GameObject);
+		ice_cube.transform.position = this.transform.position + new Vector3 (0, 0, -0.95f);
+		ice_cube.transform.localScale = new Vector3 (ice_cube_size, 0, ice_cube_size);
 	}
 
-	public void Freeze() {
-		if(iceCube.transform.localScale.y < 95.0f)
-			iceCube.transform.localScale += new Vector3 (0,freezingSpeed,0);
+	public void Freeze(float freezing_power) {
+		if(ice_cube.transform.localScale.y < ice_cube_size)
+			ice_cube.transform.localScale += new Vector3 (0,freezing_power*ice_cube_size*Time.deltaTime,0);
 	}
 
 	public void Defreeze() {
-		if(iceCube.transform.localScale.y > 0.0f)
-			iceCube.transform.localScale -= new Vector3 (0,defreezingSpeed,0);
+		if(ice_cube.transform.localScale.y > 0.0f)
+			ice_cube.transform.localScale -= new Vector3 (0,defreezing_speed,0);
 	}
 
 	void OnDestroy() {
-		GameObject.Destroy (iceCube);
-		//this.gameObject
+		GameObject.Destroy (ice_cube);
 	}
-	/*void OnMouseDown () {
-		if (!iceCube) { 
-			iceCube = Instantiate (Resources.Load ("Prefab/S4_IceBox", typeof(GameObject)) as GameObject);
-			iceCube.transform.position = this.transform.position + new Vector3 (0, 0, -0.95f);
-			iceCube.transform.localScale = new Vector3 (95, 0, 95);
-		}
-		else if(iceCube.transform.localScale.y >= 95.0f) {
-			Debug.Log ("Destroy Cube");
-		}
-	}
-
-	void OnMouseDrag () {
-		if(iceCube.transform.localScale.y < 95.0f)
-			iceCube.transform.localScale += new Vector3 (0,freezingSpeed,0);
-	}*/
 
 }

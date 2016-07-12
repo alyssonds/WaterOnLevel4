@@ -9,8 +9,8 @@ public class S4_River : MonoBehaviour {
 
 	protected Material mat_river = null;
 	protected Material mat_river_encounter = null;
-	public static List<GameObject> positionsDykesOnRivers = new List<GameObject> ();
-	protected List<Transform> riverPoints = new List<Transform>();
+	public static List<GameObject> positions_dykes_on_rivers = new List<GameObject> ();
+	protected List<Transform> river_points = new List<Transform>();
 
 
 	// Use this for initialization
@@ -39,7 +39,7 @@ public class S4_River : MonoBehaviour {
 			{
 				if (grandchild.gameObject.GetComponent<S4_RiverPiece>().IsShootingPoint()) {
 					//create a new shooting point, false indicates it is free
-					positionsDykesOnRivers.Add (grandchild.gameObject);
+					positions_dykes_on_rivers.Add (grandchild.gameObject);
 				}
 			}
 		}
@@ -103,7 +103,7 @@ public class S4_River : MonoBehaviour {
 
 	protected void CreateRiver(GameObject riverParent) {
 		//clear the control points, in case not the first call
-		riverPoints.Clear ();
+		river_points.Clear ();
 
 		GameObject riverBranch = new GameObject(riverParent.ToString());
 		riverBranch.transform.SetParent (this.gameObject.transform);
@@ -111,12 +111,12 @@ public class S4_River : MonoBehaviour {
 		//initialize the control points
 		foreach (Transform child in riverParent.transform)
 		{
-			riverPoints.Add (child);
+			river_points.Add (child);
 		}
 		//create the river pieces
-		for (int i = 0; i < (riverPoints.Count - 1); i++) {
+		for (int i = 0; i < (river_points.Count - 1); i++) {
 			//if it is the last piece
-			if (i == riverPoints.Count - 2) {  
+			if (i == river_points.Count - 2) {  
 				GameObject watermill = null;
 				Debug.Log (riverParent.ToString ());
 				if(riverParent.ToString().Equals("RiverParent (UnityEngine.GameObject)"))
@@ -126,10 +126,10 @@ public class S4_River : MonoBehaviour {
 				else if (riverParent.ToString().Equals("RiverParent3 (UnityEngine.GameObject)"))
 					watermill = GameObject.Find ("WaterMill3");
 				Debug.Log (watermill.ToString());
-				CreateRiverPiece (riverPoints [i], riverPoints [i + 1], riverBranch, true, watermill);
+				CreateRiverPiece (river_points [i], river_points [i + 1], riverBranch, true, watermill);
 			}
 			else
-				CreateRiverPiece (riverPoints [i], riverPoints [i + 1], riverBranch);
+				CreateRiverPiece (river_points [i], river_points [i + 1], riverBranch);
 
 		}
 	}
@@ -217,12 +217,12 @@ public class S4_River : MonoBehaviour {
 	protected Vector3 GetRandomPositionOnRivers()
 	{
 		//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
-		int index = Random.Range (0, positionsDykesOnRivers.Count);
+		int index = Random.Range (0, positions_dykes_on_rivers.Count);
 		//while is busy, look for a new one
-		while(positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().dyke)
-			index = Random.Range (0, positionsDykesOnRivers.Count);
+		while(positions_dykes_on_rivers[index].GetComponent<S4_RiverPiece>().dyke)
+			index = Random.Range (0, positions_dykes_on_rivers.Count);
 
-		return positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().startingPoint.position;
+		return positions_dykes_on_rivers[index].GetComponent<S4_RiverPiece>().startingPoint.position;
 	}
 
 

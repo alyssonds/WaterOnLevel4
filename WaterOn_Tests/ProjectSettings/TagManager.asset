@@ -10,6 +10,7 @@ TagManager:
   - Dyke
   - Cloud
   - Umbrella
+  - Turret
   layers:
   - Default
   - TransparentFX
