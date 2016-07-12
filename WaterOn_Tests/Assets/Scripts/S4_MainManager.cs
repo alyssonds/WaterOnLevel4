@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using ProgressBar;
 
 public class S4_MainManager : MonoBehaviour {
 
@@ -28,7 +27,7 @@ public class S4_MainManager : MonoBehaviour {
 	private float lake_water_level = 1.0f; // 0 -> 1
 	private float mountain_water_level = 1.0f;
 
-	private float sust_level = 1.0f;
+	private static float sust_level = 1.0f;
 
 	//values to balance the water in the scenario
 	private const float water_speed = 0.1f/3f;
@@ -42,11 +41,9 @@ public class S4_MainManager : MonoBehaviour {
 
 	private bool cycle_started = false;
 
-	//values to glow the UI background when in danger mode
-	public float background_interpolate = 0.0f;
-	private bool growing = true;
-	private float time_to_check_sust = 3f;
-	private bool controling_sust = false;
+	//values to control the UI 
+	public static bool controling_sust = false; //this value is altered in S4_UIManager
+	S4_UIManager ui_manager;
 
 	// Lake
 	protected float lake_generation_time = 3f;
@@ -69,8 +66,8 @@ public class S4_MainManager : MonoBehaviour {
 	protected GameObject environmentGO = null;
 	protected GameObject villain = null;
 	protected GameObject cloud = null;
-	protected GameObject progress = null;
-	protected GameObject backgroundUI = null;
+
+
 	protected EllipsoidParticleEmitter snowEmitter = null;
 	protected ParticleSystem rainParticleSystem = null;
 	protected List<GameObject> cloudsGO = new List<GameObject> ();
@@ -83,33 +80,6 @@ public class S4_MainManager : MonoBehaviour {
 	protected LevelStatus _levelStatus = LevelStatus.Sustainable;
 	List<Vector3> lakeCloudsStartingPoints = new List<Vector3> ();
 
-	public struct Edge
-	{
-		public Mesh mesh;
-		public int v1;
-		public int v2;
-		public int triangleIndex;
-		public Edge(Mesh m, int aV1, int aV2, int aIndex)
-		{
-			mesh = m;
-			v1 = aV1;
-			v2 = aV2;
-			triangleIndex = aIndex;
-		}
-		public bool IsEqual(Edge _edge)
-		{
-			if ((_edge.v1 == v1 && _edge.v2 == v2) || (_edge.v1 == v2 && _edge.v2 == v1))
-				return true;
-			else
-				return false;
-		}
-
-		public Vector3 GetMedianPoint()
-		{
-			Vector3 tmp = (mesh.vertices[v1] - mesh.vertices[v2]) * 0.5f; 
-			return new Vector3(mesh.vertices[v2].x + tmp.x, mesh.vertices[v2].y + tmp.y, mesh.vertices[v2].z + tmp.z);
-		}
-	}
 
 	void Start () 
 	{
@@ -125,19 +95,15 @@ public class S4_MainManager : MonoBehaviour {
 		river.AddComponent<S4_River> ();
 		originalMountainTex =  mountain.GetComponent<Renderer>().GetComponent<MeshRenderer>().materials [1].mainTexture as Texture2D;
 		alteredMountainTex = Instantiate (originalMountainTex);
-		progress = GameObject.Find ("ProgressBarUI");
-		backgroundUI = GameObject.Find ("Background");
+		ui_manager = GameObject.Find ("Canvas").GetComponent<S4_UIManager> ();
+
 		lakeGO = GameObject.Find ("WaterBasicDaytime").gameObject;
 		snowEmitter = GameObject.Find ("Snow").GetComponent<EllipsoidParticleEmitter>();
 		rainParticleSystem = GameObject.Find ("Rain").GetComponent<ParticleSystem>();
-		/*foreach (GameObject go in FindObjectsOfType(typeof(GameObject))) {
-			if (go.name.StartsWith ("Cloud"))
-				cloudsGO.Add (go);
-		}*/
 		mountainPeak = GameObject.Find ("MountainPeak").transform;
 
 		// Find Lake Vertices Average Area
-		lakeCloudsStartingPoints = FindPointsInsideMesh (lakeGO);
+		lakeCloudsStartingPoints = S4_Utils.FindPointsInsideMesh (lakeGO);
 
 		//create the rivers
 		foreach (Transform child in GameObject.Find ("RiverPoints").transform)
@@ -157,53 +123,6 @@ public class S4_MainManager : MonoBehaviour {
 		mountain.GetComponent<Renderer> ().GetComponent<MeshRenderer> ().materials [1].SetTexture ("_MainTex",originalMountainTex);
 	}
 
-	List<Vector3> FindPointsInsideMesh(GameObject go)
-	{
-		Mesh m = go.GetComponent<MeshFilter>().mesh;
-		List<Edge> meshEdges = new List<Edge>();
-		int[] meshTris = m.triangles;
-
-		// Populate meshEdges
-		for (int i = 0; i < meshTris.Length; i += 3)
-		{
-			int v1 = meshTris[i];
-			int v2 = meshTris[i + 1];
-			int v3 = meshTris[i + 2];
-			meshEdges.Add(new Edge(m, v1, v2, i));
-			meshEdges.Add(new Edge(m, v2, v3, i));
-			meshEdges.Add(new Edge(m, v3, v1, i));
-		}
-
-		// Take just internal edges
-		List<Edge> internalEdges = new List<Edge> ();
-		for (int e = 0; e < meshEdges.Count; e++) {
-			int idx = 0;
-			for (int f = 0; f < meshEdges.Count; f++) {
-				if (meshEdges [e].IsEqual (meshEdges [f]))
-					idx++;
-			}
-			if (idx > 1)
-				internalEdges.Add (meshEdges[e]);
-		}
-
-		List<Vector3> internalVertices = new List<Vector3> ();
-		foreach(Edge e in internalEdges)
-		{
-			internalVertices.Add (e.GetMedianPoint());
-		}
-
-/*		foreach (Vector3 v in internalVertices) {
-			GameObject tmp1 = GameObject.CreatePrimitive (PrimitiveType.Cube);
-			tmp1.transform.position = go.transform.TransformPoint (v);
-		}
-*/
-		List<Vector3> internalVerticesWorld = new List<Vector3> ();
-		foreach(Vector3 v in internalVertices)
-		{
-			internalVerticesWorld.Add (go.transform.TransformPoint (v));
-		}
-		return internalVerticesWorld;
-	}
 
 	public void ChangeWeatherStatus(WeatherStatus status)
 	{
@@ -240,17 +159,16 @@ public class S4_MainManager : MonoBehaviour {
 
 	public void ChangeLevelStatus(LevelStatus status)
 	{
-		Debug.Log ("ChangeLevelStatus :: To " + status);
+		//Debug.Log ("ChangeLevelStatus :: To " + status);
 		switch (status) 
 		{
 		case LevelStatus.Balancing:
 			if (_levelStatus == LevelStatus.Danger) {
-				StopCoroutine ("DangerGlow");
-				StartCoroutine ("StopGlow");
+				ui_manager.StopDangerGlow ();
 			}
 			break;
 		case LevelStatus.Danger:
-			StartCoroutine ("DangerGlow");
+			ui_manager.StartDangerGlow ();
 			break;
 		case LevelStatus.Sustainable:
 			break;
@@ -258,51 +176,12 @@ public class S4_MainManager : MonoBehaviour {
 		_levelStatus = status;
 	}
 
-	IEnumerator DangerGlow() {
-		if (background_interpolate <= 0.0f)
-			growing = true;
-		else if (background_interpolate >= 0.8f)
-			growing = false;
-
-		if (growing)
-			background_interpolate += 0.01f;
-		else
-			background_interpolate -= 0.01f;
-		backgroundUI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
-
-		yield return 0f;
-		StartCoroutine ("DangerGlow");
-	}
-
-	IEnumerator StopGlow() {
-		if (background_interpolate < 0.0f)
-			background_interpolate += 0.01f;
-		if (background_interpolate > 0.0f)
-			background_interpolate -= 0.01f;
-
-		//Test to see if it is zero
-		if (background_interpolate >= -0.1f && background_interpolate <= 0.1f)
-			background_interpolate = 0.0f;
-
-		backgroundUI.GetComponent<CanvasRenderer> ().SetColor(Color.Lerp (Color.white, Color.red, background_interpolate));
-		yield return 0f;
-		if (Mathf.Approximately (background_interpolate, 0.0f)) {
-			growing = true;
-			StopCoroutine ("StopGlow");
-		}
-		else {
-			StartCoroutine ("StopGlow");
-		}
-	}
 
 	IEnumerator PlayLakeSteam()
 	{
 		Vector3 rndPoint = lakeCloudsStartingPoints[Random.Range(0,lakeCloudsStartingPoints.Count)];
-		//GameObject rndCloud = Instantiate(cloudsGO[Random.Range(0,cloudsGO.Count)]);
-
 		GameObject rndCloud = Instantiate(Resources.Load("Prefab/Cloud", typeof(GameObject)) as GameObject);
 		rndCloud.tag = "Cloud";
-	//	rndCloud.getc
 		rndCloud.AddComponent<S4_Cloud> ();
 		if(cycle_started)
 			lake_water_level = DecreaseWaterLevel (lake_water_level, water_speed*(1 + decrease_lake));
@@ -330,7 +209,7 @@ public class S4_MainManager : MonoBehaviour {
 
 	IEnumerator MoveCloudsToMountain(GameObject cloud)
 	{
-		Vector3 toPosition = GetPointRandomInCircle (mountainPeak.transform.position, 2.5f);
+		Vector3 toPosition = S4_Utils.GetPointRandomInCircle (mountainPeak.transform.position, 2.5f);
 		cloud.transform.DOMove (toPosition, lake_cloud_toMountains_time).SetEase(Ease.InOutQuad);
 		yield return new WaitForSeconds (lake_cloud_toMountains_time);
 		//cloud.GetComponent<Renderer> ().material.DOFade (0f, 5f);
@@ -375,13 +254,7 @@ public class S4_MainManager : MonoBehaviour {
 			return 1f;
 	}
 
-	Vector3 GetPointRandomInCircle(Vector3 pos, float radius)
-	{
-		int angle = Random.Range(0,360);
-		float newX = pos.x + radius * Mathf.Cos(angle * Mathf.Deg2Rad);
-		float newY = pos.y + radius * Mathf.Sin(angle * Mathf.Deg2Rad);
-		return new Vector3(newX, newY, pos.z);
-	}
+
 
 	void InitializeShootingPoints(){
 
@@ -531,8 +404,7 @@ public class S4_MainManager : MonoBehaviour {
 		sust_level = 1f - pressure_to_balance;
 		//move the progressbar
 		if (cycle_started & !controling_sust)
-			StartCoroutine (ControlLevelStatus(sust_level));
-			//progress.GetComponent<S4_UIProgressBar> ().SetNormalizedPosition (sust_level);
+			ui_manager.StartControlLevelStatus ();
 		//danger level stat
 		if (sust_level < 0.4 && _levelStatus != LevelStatus.Danger)
 			ChangeLevelStatus (LevelStatus.Danger);
@@ -544,11 +416,8 @@ public class S4_MainManager : MonoBehaviour {
 
 	}
 
-	IEnumerator ControlLevelStatus(float sustainability_level) {
-		controling_sust = true;
-		progress.GetComponent<S4_UIProgressBar> ().SetNormalizedPosition (sust_level);
-		yield return new WaitForSeconds (time_to_check_sust);
-		StartCoroutine (ControlLevelStatus(sust_level));
+	public static float GetSustainabilityLevel() {
+		return sust_level;
 	}
 
 	void MountainPressure() {
