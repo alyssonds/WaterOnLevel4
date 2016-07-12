@@ -8,10 +8,12 @@ public class S4_UIManager : MonoBehaviour {
 	private bool growing = true;
 	protected GameObject backgroundUI = null;
 	protected GameObject progress = null;
+	S4_WaterCycleManager water_manager;
 
 	void Awake() {
 		backgroundUI = GameObject.Find ("Background");
 		progress = GameObject.Find ("ProgressBarUI");
+		water_manager = GameObject.Find("S4_MainManager").GetComponent<S4_WaterCycleManager> ();
 	}
 
 	IEnumerator DangerGlow() {
@@ -54,7 +56,7 @@ public class S4_UIManager : MonoBehaviour {
 	}
 
 	IEnumerator ControlLevelStatus() {
-		float sust_level = S4_MainManager.GetSustainabilityLevel();
+		float sust_level = water_manager.GetSustainabilityLevel();
 		progress.GetComponent<S4_UIProgressBar> ().SetNormalizedPosition (sust_level);
 		yield return new WaitForSeconds (time_to_check_sust);
 		StartCoroutine ("ControlLevelStatus");
