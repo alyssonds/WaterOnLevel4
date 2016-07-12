@@ -35,6 +35,10 @@ public class S4_VillainTurret : MonoBehaviour {
 	private bool shooting;                              // A bool to say whether or not the enemy is currently shooting.
 	private List<GameObject> frozenClouds = new List<GameObject>();
 
+	//variable for altering color when heated
+	[Range(0f,1f)]
+	public float interpolate = 0.0f;
+
 	public enum TurretStatus
 	{
 		Idle,
@@ -225,7 +229,10 @@ public class S4_VillainTurret : MonoBehaviour {
 			IdleMovement ();
 		//else
 		//	this.transform.LookAt (lockedCloud.transform);
-
+		Component[] rendererArray = this.GetComponentsInChildren<MeshRenderer>();
+		foreach (MeshRenderer renderer in rendererArray) {
+			renderer.material.SetColor("_Color",Color.Lerp(Color.white, Color.red, interpolate));
+		}
 	}
 
 	void ChangeStatus (TurretStatus status){

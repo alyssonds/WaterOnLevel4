@@ -37,7 +37,35 @@ public class S4_VillainFactory : MonoBehaviour {
 
 	}
 
-	public void ShotDykes(GameObject bullet, Vector3 position)
+	public void ShootDyke() {
+		int i = 0;
+		bool freeSpace = false;
+		//check if there are any free spaces
+		while (i < S4_River.positionsDykesOnRivers.Count) {
+			if (!(S4_River.positionsDykesOnRivers [i].GetComponent<S4_RiverPiece>().dyke)) {
+				freeSpace = true;
+				break;
+			}
+			i++;
+		}
+		if (freeSpace) {
+			GameObject bullet = Instantiate(Resources.Load("Prefab/S4_ClosedDyke", typeof(GameObject)) as GameObject);
+			bullet.tag = "Dyke";
+			bullet.AddComponent<S4_Dyke> ();
+			//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
+			int index = Random.Range (0, S4_River.positionsDykesOnRivers.Count);
+			//while is busy, look for a new one
+			while(S4_River.positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().dyke)
+				index = Random.Range (0, S4_River.positionsDykesOnRivers.Count);
+
+			S4_River.positionsDykesOnRivers [index].GetComponent<S4_RiverPiece>().dyke = bullet;
+			StartShootingCoroutine(bullet, S4_River.positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().startingPoint.position);
+		} else {
+			Debug.Log ("Theres no free space anymore");
+		}
+	}
+
+	protected void StartShootingCoroutine(GameObject bullet, Vector3 position)
 	{
 		//StartCoroutine (ShootingDykes());
 		StartCoroutine(SimulateProjectile(bullet, position));
@@ -63,7 +91,7 @@ public class S4_VillainFactory : MonoBehaviour {
 		// Calculate the velocity needed to throw the object to the target at specified angle.
 		float projectile_Velocity = target_Distance / (Mathf.Sin(2 * firingAngle * Mathf.Deg2Rad) / gravity);
 
-		// Extract the X  Y componenent of the velocity
+		// Extract the X  Y component of the velocity
 		float Vx = Mathf.Sqrt(projectile_Velocity) * Mathf.Cos(firingAngle * Mathf.Deg2Rad);
 		float Vy = Mathf.Sqrt(projectile_Velocity) * Mathf.Sin(firingAngle * Mathf.Deg2Rad);
 

@@ -9,7 +9,7 @@ public class S4_River : MonoBehaviour {
 
 	protected Material mat_river = null;
 	protected Material mat_river_encounter = null;
-
+	public static List<GameObject> positionsDykesOnRivers = new List<GameObject> ();
 	protected List<Transform> riverPoints = new List<Transform>();
 
 
@@ -17,8 +17,33 @@ public class S4_River : MonoBehaviour {
 	void Awake () {
 		mat_river = Resources.Load ("Materials/M_S4_River", typeof(Material)) as Material;
 		mat_river_encounter = Resources.Load ("Materials/M_S4_River_Encounter", typeof(Material)) as Material;
+
+		//create the rivers
+		foreach (Transform child in GameObject.Find ("RiverPoints").transform)
+		{
+			CreateRiver (child.gameObject); 
+		}
+
+		//Initialize the possible shooting points in the river
+		InitializeShootingPoints ();
+
 	}
-	
+
+	//Initialize the possible shooting points in the river
+	void InitializeShootingPoints(){
+
+		Transform transform = GameObject.Find ("River2").transform;
+		foreach (Transform child in transform)
+		{
+			foreach (Transform grandchild in child)
+			{
+				if (grandchild.gameObject.GetComponent<S4_RiverPiece>().IsShootingPoint()) {
+					//create a new shooting point, false indicates it is free
+					positionsDykesOnRivers.Add (grandchild.gameObject);
+				}
+			}
+		}
+	}
 
 	//Fill a branch. 
 	public void FillBranch (Vector3 position) {
@@ -76,7 +101,7 @@ public class S4_River : MonoBehaviour {
 		return blocked_branches;
 	}
 
-	public void CreateRiver(GameObject riverParent) {
+	protected void CreateRiver(GameObject riverParent) {
 		//clear the control points, in case not the first call
 		riverPoints.Clear ();
 
@@ -188,5 +213,17 @@ public class S4_River : MonoBehaviour {
 		}
 
 	}
+
+	protected Vector3 GetRandomPositionOnRivers()
+	{
+		//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
+		int index = Random.Range (0, positionsDykesOnRivers.Count);
+		//while is busy, look for a new one
+		while(positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().dyke)
+			index = Random.Range (0, positionsDykesOnRivers.Count);
+
+		return positionsDykesOnRivers[index].GetComponent<S4_RiverPiece>().startingPoint.position;
+	}
+
 
 }
