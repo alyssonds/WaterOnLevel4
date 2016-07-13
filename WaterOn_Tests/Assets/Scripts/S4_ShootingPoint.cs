@@ -4,16 +4,32 @@ using System.Collections;
 [System.Serializable]
 public class S4_ShootingPoint {
 
+	//transform of the shooting point
 	public Transform transform { get; set;}
-	private bool busy = false;
-	public GameObject dyke = null;
+	//element that is on the shooting point
+	public GameObject element = null;
 
-	public S4_ShootingPoint(Transform input, bool busy) {
+	public S4_ShootingPoint(Transform input) {
 		transform = input;
-		this.busy = busy;
 	}
-		
-	public Vector3 GetRiverPositionOfDyke(GameObject dyke) {
+
+	public void SetFree() {
+		this.element = null;
+	}
+
+	public bool IsBusy(){
+		if (element)
+			return true;
+		else
+			return false;
+	}
+
+	public void SetBusy(GameObject _element) {
+		this.element = _element;
+	}
+
+	//OLD
+	/*public Vector3 GetRiverPositionOfDyke(GameObject dyke) {
 		if (this.dyke && dyke.GetInstanceID() == this.dyke.GetInstanceID()) {
 			return this.transform.position;
 
@@ -28,17 +44,5 @@ public class S4_ShootingPoint {
 		}else
 			return null;
 	}
-
-	public void SetFree() {
-		this.busy = true;
-		this.dyke = null;
-	}
-
-	public bool IsBusy(){
-		return busy;
-	}
-
-	//public void SetBusy() {
-	//	busy = true;
-	//}
+*/
 }

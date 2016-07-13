@@ -39,6 +39,8 @@ public class S4_MainManager : MonoBehaviour {
 
 		if (Input.GetKeyDown (KeyCode.D))
 			villain.GetComponent<S4_VillainFactory>().ShootDyke ();
+		if (Input.GetKeyDown (KeyCode.F))
+			villain.GetComponent<S4_VillainFactory>().ShootTurret ();
 		if(Input.GetKeyDown(KeyCode.Space))
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		if (Input.GetKeyDown (KeyCode.Escape))

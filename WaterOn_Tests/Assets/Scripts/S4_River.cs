@@ -9,7 +9,7 @@ public class S4_River : MonoBehaviour {
 
 	protected Material mat_river = null;
 	protected Material mat_river_encounter = null;
-	public static List<GameObject> positions_dykes_on_rivers = new List<GameObject> ();
+
 	protected List<Transform> river_points = new List<Transform>();
 
 
@@ -24,25 +24,6 @@ public class S4_River : MonoBehaviour {
 			CreateRiver (child.gameObject); 
 		}
 
-		//Initialize the possible shooting points in the river
-		InitializeShootingPoints ();
-
-	}
-
-	//Initialize the possible shooting points in the river
-	void InitializeShootingPoints(){
-
-		Transform transform = GameObject.Find ("River2").transform;
-		foreach (Transform child in transform)
-		{
-			foreach (Transform grandchild in child)
-			{
-				if (grandchild.gameObject.GetComponent<S4_RiverPiece>().IsShootingPoint()) {
-					//create a new shooting point, false indicates it is free
-					positions_dykes_on_rivers.Add (grandchild.gameObject);
-				}
-			}
-		}
 	}
 
 	//Fill a branch. 
@@ -214,7 +195,7 @@ public class S4_River : MonoBehaviour {
 
 	}
 
-	protected Vector3 GetRandomPositionOnRivers()
+	/*protected Vector3 GetRandomPositionOnRivers()
 	{
 		//it should be guaranteed that there are any free spaces before. If not it goes into an infinite loop!
 		int index = Random.Range (0, positions_dykes_on_rivers.Count);
@@ -223,7 +204,7 @@ public class S4_River : MonoBehaviour {
 			index = Random.Range (0, positions_dykes_on_rivers.Count);
 
 		return positions_dykes_on_rivers[index].GetComponent<S4_RiverPiece>().startingPoint.position;
-	}
+	}*/
 
 
 }

@@ -33,10 +33,10 @@ public class S4_InteractionManager : MonoBehaviour {
 				if(hit.collider.gameObject.CompareTag("Dyke")) {
 					if (hit.collider.gameObject.GetComponent<S4_Dyke> ().ice_cube.transform.localScale.y >= 95.0f) {
 						Vector3 riverPosition = Vector3.zero;
-						for (int i = 0; i < S4_River.positions_dykes_on_rivers.Count; i++) {
-							riverPosition = S4_River.positions_dykes_on_rivers [i].GetComponent<S4_RiverPiece> ().GetRiverPositionOfDyke (hit.collider.gameObject);
+						for (int i = 0; i < S4_VillainFactory.positions_dykes_on_rivers.Count; i++) {
+							riverPosition = S4_VillainFactory.positions_dykes_on_rivers [i].GetComponent<S4_RiverPiece> ().GetRiverPositionOfDyke (hit.collider.gameObject);
 							if (riverPosition != Vector3.zero) {
-								S4_River.positions_dykes_on_rivers [i].GetComponent<S4_RiverPiece> ().SetFree ();
+								S4_VillainFactory.positions_dykes_on_rivers [i].GetComponent<S4_RiverPiece> ().SetFree ();
 								GameObject.Find("River2").GetComponent<S4_River> ().FillBranch (riverPosition);
 								GameObject.Destroy (hit.collider.gameObject);
 								break;

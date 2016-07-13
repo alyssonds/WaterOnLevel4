@@ -20,7 +20,6 @@ public class S4_VillainTurret : MonoBehaviour {
 	public float moving_speed = 4.0f;				// Speed with the turret moves while aiming 
 	private bool cloud_in_sight;                      // Whether or not the player is currently sighted.
 	private SphereCollider col;                     // Reference to the sphere collider trigger component.
-	private GameObject locked_cloud;					// Cloud in lock to be shot
 
 
 	//variables for shooting
@@ -37,7 +36,7 @@ public class S4_VillainTurret : MonoBehaviour {
 
 	//variable for altering color when heated
 	[Range(0f,1f)]
-	public float interpolate = 0.0f;
+	private float interpolate = 0.0f;
 
 	public enum TurretStatus
 	{
@@ -57,6 +56,8 @@ public class S4_VillainTurret : MonoBehaviour {
 		col = this.GetComponent<SphereCollider> ();	
 		laser_shot_line = this.GetComponentInChildren<LineRenderer> ();
 		laser_shot_light = this.GetComponentInChildren<Light> ();
+		shoot_audioclip = Instantiate(Resources.Load("Sounds/fx-shot", typeof(AudioClip)) as AudioClip);
+		charge_audioclip = Instantiate(Resources.Load("Sounds/fx-charge", typeof(AudioClip)) as AudioClip);
 
 		cloud_in_sight = false;
 
@@ -97,6 +98,22 @@ public class S4_VillainTurret : MonoBehaviour {
 		}
 	}
 
+	protected void Aim(GameObject target) {
+		Quaternion neededRotation = Quaternion.LookRotation(target.transform.position - this.transform.position);
+		float acc = 0;
+		while(acc < 0.99f) {
+			this.transform.rotation = Quaternion.Slerp(this.transform.rotation, neededRotation, Time.deltaTime * moving_speed);
+			acc += Time.deltaTime;
+		}
+	}
+
+	IEnumerator KeepInSight (GameObject target) {
+		Quaternion neededRotation = Quaternion.LookRotation(target.transform.position - this.transform.position);
+		this.transform.rotation = Quaternion.Slerp(this.transform.rotation, neededRotation, Time.deltaTime * moving_speed);
+		yield return null;
+		StartCoroutine ("KeepInSight", target);
+	}
+
 	IEnumerator Shoot (GameObject target)
 	{
 		Quaternion initialRotation = this.transform.rotation;
@@ -110,8 +127,9 @@ public class S4_VillainTurret : MonoBehaviour {
 			yield return null;
 			acc += Time.deltaTime;
 		}
+		//Aim (target);
 		cloud_in_sight = true;
-		locked_cloud = target;
+		StartCoroutine ("KeepInSight", target);
 
 		//Charge
 		float chargeSpeed = (1f - laser_shot_light.intensity) / time_to_charge_shoot;
@@ -137,8 +155,8 @@ public class S4_VillainTurret : MonoBehaviour {
 		laser_shot_light.intensity = shoot_flash_intensity;
 		// Play the gun shot clip at the position of the muzzle flare.
 		AudioSource.PlayClipAtPoint(shoot_audioclip, laser_shot_light.transform.position);
-
-
+		// Stop aiming
+		StopCoroutine("KeepInSight");
 
 		//freeze the cloud
 		frozen_clouds.Add(target);
@@ -146,12 +164,11 @@ public class S4_VillainTurret : MonoBehaviour {
 
 		yield return new WaitForSeconds(0.1f);
 
-		Debug.Log ("Decharging");
 		//After shooting
 		laser_shot_line.enabled = false;
 
+		//Decharging the turret
 		float fadeSpeed = (laser_shot_light.intensity) / time_to_fade_after_shoot;
-
 		elapse_time = 0f;
 		while (elapse_time < time_to_fade_after_shoot)
 		{
@@ -162,8 +179,8 @@ public class S4_VillainTurret : MonoBehaviour {
 			yield return null;
 		}
 
+		//Moving back to original position 
 		acc = 0f;
-	//	neededRotation = Quaternion.LookRotation(initialPosition - this.transform.position);
 		while(acc < 1f) {
 			this.transform.rotation = Quaternion.Slerp(this.transform.rotation, initialRotation, Time.deltaTime * moving_speed);
 			yield return null;
@@ -232,16 +249,25 @@ public class S4_VillainTurret : MonoBehaviour {
 		if (interpolate < 1.0f)
 			interpolate += heating_power * Time.deltaTime;
 		else {
-			ParticleSystem explosion = this.transform.GetChild (2).GetComponent<ParticleSystem> ();
-			explosion.Play ();
-			MeshRenderer[] renderers = this.gameObject.GetComponentsInChildren<MeshRenderer> ();
-			foreach (MeshRenderer renderer in renderers) {
-				renderer.enabled = false;
-			}
-			Destroy (this.gameObject, explosion.duration);
+			DestroyTurret ();
 		}
 	}
 
+	private void DestroyTurret () {
+		ParticleSystem explosion = this.transform.GetChild (2).GetComponent<ParticleSystem> ();
+		explosion.Play ();
+		//Make the object invisible
+		MeshRenderer[] renderers = this.gameObject.GetComponentsInChildren<MeshRenderer> ();
+		foreach (MeshRenderer renderer in renderers) {
+			renderer.enabled = false;
+		}
+		//Stop the engines
+		this.transform.GetChild(0).GetComponent<ParticleSystem>().Stop();
+		this.transform.GetChild(1).GetComponent<ParticleSystem>().Stop();
+
+		Destroy (this.gameObject, explosion.duration);
+
+	}
 
 	void ChangeStatus (TurretStatus status){
 		switch (status) {
@@ -251,6 +277,7 @@ public class S4_VillainTurret : MonoBehaviour {
 		case TurretStatus.Searching:
 			break;
 		case TurretStatus.Charging:
+			//StartCoroutine(KeepInSight)
 			break;
 		case TurretStatus.Fire:
 			break;
