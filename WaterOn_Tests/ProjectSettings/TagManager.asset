@@ -11,6 +11,7 @@ TagManager:
   - Cloud
   - Umbrella
   - Turret
+  - MountainPeak
   layers:
   - Default
   - TransparentFX

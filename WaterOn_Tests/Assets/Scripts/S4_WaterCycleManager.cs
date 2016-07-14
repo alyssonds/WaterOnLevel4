@@ -30,8 +30,9 @@ public class S4_WaterCycleManager : MonoBehaviour {
 	List<Vector3> lake_clouds_starting_points = new List<Vector3> ();
 
 	//Clouds
-	protected List<GameObject> clouds = new List<GameObject> ();
-	protected bool cloud_coroutine_stopped = false;  
+	public static List<GameObject> clouds = new List<GameObject> ();
+	protected bool cloud_coroutine_stopped = false; 
+	public float cloud_time_to_destroy = 4f; 
 
 	//Mountain
 	protected GameObject mountain = null;
@@ -116,7 +117,7 @@ public class S4_WaterCycleManager : MonoBehaviour {
 		rndCloud.AddComponent<S4_Cloud> ();
 		if(cycle_started)
 			lake_water_level = DecreaseWaterLevel (lake_water_level, water_speed*(1 + decrease_lake));
-		clouds.Add (rndCloud);
+		
 		foreach (Transform child in rndCloud.transform) {
 			child.gameObject.SetActive (false);
 		}
@@ -141,18 +142,37 @@ public class S4_WaterCycleManager : MonoBehaviour {
 	IEnumerator MoveCloudsToMountain(GameObject cloud)
 	{
 		Vector3 toPosition = S4_Utils.GetPointRandomInCircle (mountain_peak.transform.position, 2.5f);
-		cloud.transform.DOMove (toPosition, lake_cloud_toMountains_time).SetEase(Ease.InOutQuad);
-		yield return new WaitForSeconds (lake_cloud_toMountains_time);
-		//cloud.GetComponent<Renderer> ().material.DOFade (0f, 5f);
-		clouds.Remove(cloud);
-		Destroy (cloud, 5f);
-		//MOVE WATER TO THE MOUNTAIN
-		if (cycle_started)
+		cloud.transform.DOMove (toPosition, lake_cloud_toMountains_time).SetEase(Ease.InOutQuad).OnComplete(() => {StartCoroutine(DestroyCloud(cloud));});
+		yield return null;
+		//yield return new WaitForSeconds (lake_cloud_toMountains_time);
+		//cloud.GetComponent<Renderer> ().material.DOFade (0f, 5f); - COLOCAR EM CLOUD
+		//clouds.Remove(cloud);
+		//Destroy (cloud, 5f);
+		//MOVE WATER TO THE MOUNTAIN - COLOCAR NUM METODO PRA SER CHAMADO EM CLOUD
+	/*	if (cycle_started)
 			mountain_water_level = IncreaseWaterLevel (mountain_water_level,water_speed*(1 + increase_mountain)); 
 		if (clouds.Count > 1)
 			ChangeWeatherStatus (WeatherStatus.Snowing);
 		else
-			ChangeWeatherStatus (WeatherStatus.Nothing);
+			ChangeWeatherStatus (WeatherStatus.Nothing);*/
+	}
+
+	IEnumerator DestroyCloud(GameObject cloud) {
+		MoveWaterFromCloudToMountain();
+		clouds.Remove(this.gameObject);
+		Destroy(cloud.gameObject, cloud_time_to_destroy);
+		yield return null;
+	}
+
+	public void MoveWaterFromCloudToMountain() {
+		mountain_water_level = IncreaseWaterLevel (mountain_water_level,water_speed*(1 + increase_mountain)); 
+	}
+
+	public void UpdateWeather() {
+		if (clouds.Count > 0)
+			ChangeWeatherStatus (WeatherStatus.Snowing);
+		else
+			ChangeWeatherStatus (WeatherStatus.Nothing);	
 	}
 
 	IEnumerator MoveWaterFromMountainToLake() {

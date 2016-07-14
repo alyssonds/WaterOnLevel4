@@ -59,14 +59,18 @@ public class S4_MainManager : MonoBehaviour {
 		if (water_manager.IsCycleStarted() & !controling_sust)
 			ui_manager.StartControlLevelStatus ();
 		//danger level stat
-		if (sust_level < 0.4 && _levelStatus != LevelStatus.Danger)
+		if (sust_level <= 0.4 && _levelStatus != LevelStatus.Danger)
 			ChangeLevelStatus (LevelStatus.Danger);
 		else if(sust_level > 0.4 && _levelStatus != LevelStatus.Balancing)
 			ChangeLevelStatus (LevelStatus.Balancing);
-
+		else if(sust_level > 0.9 && _levelStatus != LevelStatus.Sustainable)
+			ChangeLevelStatus (LevelStatus.Sustainable);
 		//calculate the mountain and lake pressure to balance
 		water_manager.UpdateMountainPressure ();
 		water_manager.UpdateLakePressure ();
+
+		//update weather
+		water_manager.UpdateWeather();
 
 	}
 
@@ -77,14 +81,15 @@ public class S4_MainManager : MonoBehaviour {
 		switch (status) 
 		{
 		case LevelStatus.Balancing:
-			if (_levelStatus == LevelStatus.Danger) {
+			if (_levelStatus == LevelStatus.Danger)
 				ui_manager.StopDangerGlow ();
-			}
 			break;
 		case LevelStatus.Danger:
 			ui_manager.StartDangerGlow ();
 			break;
 		case LevelStatus.Sustainable:
+			if (_levelStatus == LevelStatus.Danger)
+				ui_manager.StopDangerGlow ();
 			break;
 		}
 		_levelStatus = status;

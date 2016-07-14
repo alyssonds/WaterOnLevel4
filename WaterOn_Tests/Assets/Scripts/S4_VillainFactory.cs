@@ -128,7 +128,6 @@ public class S4_VillainFactory : MonoBehaviour {
 
 	IEnumerator SimulateProjectile(GameObject bullet, Vector3 targetPosition)
 	{
-		Debug.Log (targetPosition);
 		catapult_is_open = true;
 		// opening doors
 		float catLeftYtmp = catapult_opening_left.transform.localScale.y;
@@ -138,6 +137,7 @@ public class S4_VillainFactory : MonoBehaviour {
 		yield return new WaitForSeconds (factory_catapult_opening_time);
 
 		bullet.transform.position = starting_bullet_position.position;
+		bullet.SetActive (true);
 
 		// Calculate distance to target
 		float target_Distance = Vector3.Distance(bullet.transform.position, targetPosition);

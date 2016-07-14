@@ -265,6 +265,11 @@ public class S4_VillainTurret : MonoBehaviour {
 		this.transform.GetChild(0).GetComponent<ParticleSystem>().Stop();
 		this.transform.GetChild(1).GetComponent<ParticleSystem>().Stop();
 
+		//Set the clouds free
+		foreach(GameObject cloud in frozen_clouds) {
+			cloud.GetComponent<S4_Cloud> ().Defreeze ();
+		}
+
 		Destroy (this.gameObject, explosion.duration);
 
 	}
